@@ -6,14 +6,14 @@ import { Link } from 'react-router-dom';
 const AdminLayout = ({ children }) => {
   return (
     <div style={{ width: '100vw', margin: 0, padding: 0 }}>
-      <AppBar position="static" sx={{ bgcolor: 'white', boxShadow: 'none' }}>
+      <AppBar position="static" sx={{ bgcolor: 'card.background', boxShadow: 'none' }}>
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'black' }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'text.primary' }}>
             Admin Dashboard
           </Typography>
-          <Button component={Link} to="/admin/users" color="card.default">Users</Button>
-          <Button component={Link} to="/admin/settings" color="inherit">Settings</Button>
-          <Button component={Link} to="/admin/reports" color="inherit">Reports</Button>
+          <Button component={Link} to="/admin/users" sx={{color: 'text.primary'}}>Users</Button>
+          <Button component={Link} to="/admin/settings" sx={{color: 'text.primary'}}>Settings</Button>
+          <Button component={Link} to="/admin/reports" sx={{color: 'text.primary'}}>Reports</Button>
           {/* Add more links as needed */}
         </Toolbar>
       </AppBar>
