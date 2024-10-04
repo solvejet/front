@@ -56,11 +56,17 @@ const LoginForm = () => {
   };
 
   return (
-    <Box sx={{ height: 'fit-content', width: 'fit-content', display: 'flex', bgcolor: 'card.background' }}>
-      <Card sx={{ maxWidth: 450, width: '100%', bgcolor: 'transparent', boxShadow: 3, p: 2, borderRadius: 2, justifyContent: 'center', alignItems: 'center' }}>
+    <Box sx={{ height: 'fit-content', width: 'fit-content', display: 'flex', bgcolor: 'card.background', borderRadius: '0.625rem' }}>
+      <Card sx={{ maxWidth: 450, width: '100%', bgcolor: 'transparent', boxShadow: '0 0.125rem 0.625rem 0 rgba(20, 21, 33, 0.18)', p: 2, borderRadius: '0.625rem', justifyContent: 'center', alignItems: 'center' }}>
         <CardContent>
           <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ fontSize: '1.375rem', mb: 1, color: 'text.primary' }}>
             Login
+          </Typography>
+          <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ fontSize: '1.375rem', mb: 1, color: 'text.primary' }}>
+            Welcome to Pixe Technologies! 👋
+          </Typography>
+          <Typography variant="body1" align="center" sx={{ mb: 3, color: 'text.secondary' }}>
+            Please sign-in to your account and start the adventure
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <TextField
