@@ -76,7 +76,6 @@ const Inbox = () => {
       sx={{
         display: "flex",
         width: "100%",
-        paddingTop: "10px",
         height: "85vh",
       }}
     >

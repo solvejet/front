@@ -49,7 +49,7 @@ const AdminLayout = ({ children }) => {
           })}
         </Toolbar>
       </AppBar>
-      <div style={{ padding: "20px", width: "100%" }}>{children}</div>
+      <div style={{ width: "100%", paddingTop: "10px" }}>{children}</div>
     </div>
   );
 };
