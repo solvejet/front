@@ -1,13 +1,8 @@
 // src/pages/Dashboard.jsx
-import React from 'react';
-import AdminLayout from '../components/AdminLayout';
+import React from "react";
 
 const Dashboard = () => {
-  return (
-    <AdminLayout>
-      <h1>Dashboard Content</h1>
-    </AdminLayout>
-  );
+  return <h1>Dashboard Content</h1>;
 };
 
 export default Dashboard;
