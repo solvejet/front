@@ -11,6 +11,7 @@ const AdminLayout = ({ children }) => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, color: 'text.primary' }}>
             Admin Dashboard
           </Typography>
+          <Button component={Link} to="/inbox" sx={{color: 'text.primary'}}>Inbox</Button>
           <Button component={Link} to="/admin/users" sx={{color: 'text.primary'}}>Users</Button>
           <Button component={Link} to="/admin/settings" sx={{color: 'text.primary'}}>Settings</Button>
           <Button component={Link} to="/admin/reports" sx={{color: 'text.primary'}}>Reports</Button>

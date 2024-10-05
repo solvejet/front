@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'; // Import useSelector
 import LoginPage from './pages/Login';
 import { ThemeContextProvider } from './context/ThemeContext';
 import Dashboard from './pages/Dashboard';
+import Inbox from './pages/inbox/Inbox';
 import ThemeToggleButton from './components/ThemeToggleButton';
 import ProtectedRoute from './components/ProtectedRoute'; 
 
@@ -27,6 +28,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/inbox"
+              element={
+                <ProtectedRoute>
+                  <Inbox />
                 </ProtectedRoute>
               }
             />
