@@ -3,6 +3,9 @@ import { chatBots } from "../../constant/navBar";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import chatBotTitle from "../../assets/images/chatbot_title.svg";
+import { DataGrid } from "@mui/x-data-grid";
+import SmartToyIcon from "@mui/icons-material/SmartToy";
+import AddNew from "./AddNew";
 const PlayButtonIcon = () => (
   <svg
     className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1fxg462"
@@ -17,6 +20,7 @@ const PlayButtonIcon = () => (
 
 const ChatBot = () => {
   const [isSelected, setIsSelected] = useState(0);
+  const [isAdd, setIsAdd] = useState(false);
   return (
     <>
       <Box sx={{ display: "flex", gap: "10px" }}>
@@ -59,15 +63,20 @@ const ChatBot = () => {
             })}
           </Box>
         </Box>
+
         <Box
           sx={{
             width: "80%",
           }}
         >
-          <Box>
-            {isSelected === 0 && <AutoChatBot />}
-            {isSelected === 1 && <SaveTemplate />}
-          </Box>
+          {!isAdd ? (
+            <Box>
+              {isSelected === 0 && <AutoChatBot setIsAdd={setIsAdd} />}
+              {isSelected === 1 && <SaveTemplate />}
+            </Box>
+          ) : (
+            <AddNew />
+          )}
         </Box>
       </Box>
     </>
@@ -76,7 +85,7 @@ const ChatBot = () => {
 
 export default ChatBot;
 
-const AutoChatBot = () => {
+const AutoChatBot = ({ setIsAdd }) => {
   const icon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -88,6 +97,7 @@ const AutoChatBot = () => {
       <path d="M20 9V7c0-1.1-.9-2-2-2h-3c0-1.66-1.34-3-3-3S9 3.34 9 5H6c-1.1 0-2 .9-2 2v2c-1.66 0-3 1.34-3 3s1.34 3 3 3v4c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-4c1.66 0 3-1.34 3-3s-1.34-3-3-3m-2 10H6V7h12zm-9-6c-.83 0-1.5-.67-1.5-1.5S8.17 10 9 10s1.5.67 1.5 1.5S9.83 13 9 13m7.5-1.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5M8 15h8v2H8z"></path>
     </svg>
   );
+  const handleAddNew = () => setIsAdd(true);
   return (
     <Box>
       <Box
@@ -139,15 +149,14 @@ const AutoChatBot = () => {
                   "&:hover": {},
                   bgcolor: "rgb(53, 212, 114)",
                 }}
+                onClick={handleAddNew}
               >
                 Add New
               </Button>
             </Box>
           </Box>
           <Box sx={{ width: "50%" }}>
-            <Box sx={{ margin: "auto" }}>
-              play button
-            </Box>
+            <Box sx={{ margin: "auto" }}>play button</Box>
           </Box>
         </Box>
       </Box>
@@ -161,7 +170,7 @@ const AutoChatBot = () => {
           padding: 2,
         }}
       >
-        Box-1
+        <DataGridDemo />
       </Box>
     </Box>
   );
@@ -173,3 +182,84 @@ const SaveTemplate = () => {
     </Box>
   );
 };
+function DataGridDemo() {
+  const columns = [
+    { field: "id", headerName: "ID", width: 150 },
+    {
+      field: "title",
+      headerName: "Title",
+      width: 150,
+      editable: true,
+    },
+    {
+      field: "flowTitle",
+      headerName: "Flow title",
+      width: 150,
+      editable: true,
+    },
+    {
+      field: "isActive",
+      headerName: "Is Active?",
+      // type: "number",
+      width: 150,
+      editable: true,
+    },
+    {
+      field: "edit",
+      headerName: "Edit",
+      description: "This column has a value getter and is not sortable.",
+      sortable: false,
+      width: 150,
+      // valueGetter: (value, row) => ``,
+    },
+    {
+      field: "delete",
+      headerName: "Delete",
+      // type: "number",
+      width: 150,
+      editable: true,
+    },
+  ];
+
+  const rows = [];
+  return (
+    <Box sx={{ height: 400, width: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          marginBottom: 2,
+        }}
+      >
+        <SmartToyIcon fontSize="medium" sx={{ marginRight: 1 }} />
+        <Typography variant="h6">Chatbot list</Typography>
+      </Box>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 5,
+            },
+          },
+        }}
+        pageSizeOptions={[5]}
+        disableRowSelectionOnClick
+        // sx={{
+        //   "& .MuiDataGrid-columnHeader": {
+        //     backgroundColor: "#1976d2", // Header background color
+        //     color: "#fff", // Header text color
+        //     fontWeight: "bold", // Header font weight
+        //   },
+        //   "& .MuiDataGrid-columnHeaderTitle": {
+        //     fontSize: "1.2rem", // Header title font size
+        //   },
+        //   "& .MuiDataGrid-iconButton": {
+        //     color: "#fff", // Sort icons color
+        //   },
+        // }}
+      />
+    </Box>
+  );
+}
