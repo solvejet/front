@@ -16,9 +16,9 @@ import ThemeToggleButton from "./components/ThemeToggleButton";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "./components/AdminLayout";
 import RouterPaths from "./route.paths";
-import ChatBot from "./pages/chatbot/ChatBot"
-import ChatBotFlow from "./pages/chatboFlow/ChatBotFlow"
-import PhoneBook from "./pages/phonebook/PhoneBook"
+import ChatBot from "./pages/chatbot/ChatBot";
+import ChatBotFlow from "./pages/chatboFlow/ChatBotFlow";
+import PhoneBook from "./pages/phonebook/PhoneBook";
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Get auth state
 
