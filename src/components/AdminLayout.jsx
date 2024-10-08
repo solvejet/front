@@ -8,6 +8,7 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  Avatar,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { navBars } from "../constant/navBar";
@@ -18,12 +19,18 @@ import { useEffect } from "react";
 import { logoutUser } from "../redux/slices/authSlice";
 import { useDispatch } from "react-redux";
 import { MoreVert } from "@mui/icons-material";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import LogoutIcon from "@mui/icons-material/Logout";
+
 // E:\PROJECTS\whatsApp CRM\frontEnd_K\front\src\redux\slices\authSlice.js
 const AdminLayout = ({ children }) => {
   const dispatch = useDispatch();
   const location = useLocation(); // Hook to get the current location
   const [selectedPath, setSelectedPath] = useState(location.pathname);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [profileMenuAnchorEl, setProfileMenuAnchorEl] = useState(null);
   // Update selected path when route changes
   useEffect(() => {
     setSelectedPath(location.pathname);
@@ -37,6 +44,12 @@ const AdminLayout = ({ children }) => {
   const handleLogout = () => {
     dispatch(logoutUser());
   };
+  const handleProfileMenuClick = (event) => {
+    setProfileMenuAnchorEl(event.currentTarget);
+  };
+  const handleProfileMenuClose = () => {
+    setProfileMenuAnchorEl(null);
+  };
   return (
     <div style={{ width: "100vw", margin: 0, padding: 0 }}>
       <AppBar
@@ -48,7 +61,7 @@ const AdminLayout = ({ children }) => {
             edge="start"
             color="inherit"
             aria-label="menu"
-            sx={{ display: { xs: "flex", sm: "none",color:"green" } }} // Visible on small screens
+            sx={{ display: { xs: "flex", sm: "none", color: "green" } }} // Visible on small screens
             onClick={handleMenuClick}
           >
             <MoreVert />
@@ -98,19 +111,38 @@ const AdminLayout = ({ children }) => {
             );
           })}
 
-          <Button
-            sx={{
-              display: { xs: "none", sm: "flex" },
-              p: 1,
-              mx: 1,
-              color: "text.primary", // Text color
-              "&:hover": {},
-            }}
-            onClick={handleLogout}
+          {/*  */}
+          {/* Profile picture and profile menu */}
+          <IconButton
+            edge="end"
+            color="inherit"
+            aria-label="profile"
+            sx={{ ml: "auto" }} // Move to the right on large screens
+            onClick={handleProfileMenuClick}
           >
-            {" "}
-            Logout
-          </Button>
+            <Avatar alt="Profile Picture" src="/profile-pic.jpg" />
+          </IconButton>
+
+          {/* Profile Menu */}
+          <Menu
+            anchorEl={profileMenuAnchorEl}
+            open={Boolean(profileMenuAnchorEl)}
+            onClose={handleProfileMenuClose}
+            sx={{ width: 250 }}
+          >
+            <MenuItem onClick={handleProfileMenuClose}>
+              <FacebookIcon sx={{ mr: 1,color:"rgb(53, 212, 114)" }} /> Meta API keys
+            </MenuItem>
+            <MenuItem onClick={handleProfileMenuClose}>
+              <AccountCircleIcon sx={{ mr: 1,color:"rgb(53, 212, 114)" }} /> Profile
+            </MenuItem>
+            <MenuItem onClick={handleProfileMenuClose}>
+              <MonetizationOnIcon sx={{ mr: 1,color:"rgb(53, 212, 114)" }} /> Subscription
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+              <LogoutIcon sx={{ mr: 1,color:"rgb(53, 212, 114)" }} /> Logout
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       <div style={{ width: "100%", paddingTop: "10px" }}>{children}</div>
