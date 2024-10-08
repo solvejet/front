@@ -1,21 +1,42 @@
 // src/components/AdminLayout.jsx
 import React from "react";
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Menu,
+  MenuItem,
+  IconButton,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import { navBars } from "../constant/navBar";
 import { useState } from "react";
 import RouterPaths from "../route.paths";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { logoutUser } from "../redux/slices/authSlice";
+import { useDispatch } from "react-redux";
+import { MoreVert } from "@mui/icons-material";
+// E:\PROJECTS\whatsApp CRM\frontEnd_K\front\src\redux\slices\authSlice.js
 const AdminLayout = ({ children }) => {
+  const dispatch = useDispatch();
   const location = useLocation(); // Hook to get the current location
   const [selectedPath, setSelectedPath] = useState(location.pathname);
-
+  const [anchorEl, setAnchorEl] = useState(null);
   // Update selected path when route changes
   useEffect(() => {
     setSelectedPath(location.pathname);
   }, [location]);
-
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
   return (
     <div style={{ width: "100vw", margin: 0, padding: 0 }}>
       <AppBar
@@ -23,6 +44,35 @@ const AdminLayout = ({ children }) => {
         sx={{ bgcolor: "card.background", boxShadow: "none" }}
       >
         <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ display: { xs: "flex", sm: "none",color:"green" } }} // Visible on small screens
+            onClick={handleMenuClick}
+          >
+            <MoreVert />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+            sx={{ display: { xs: "flex", sm: "none" } }}
+          >
+            {navBars.map((button) => (
+              <MenuItem
+                key={button.id}
+                onClick={handleMenuClose}
+                component={Link}
+                to={button.path}
+              >
+                {button.icons}
+                {button.label}
+              </MenuItem>
+            ))}
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          </Menu>
+          {/* Buttons for larger screens */}
           {navBars.map((button) => {
             const isSelected = button.path === selectedPath;
 
@@ -47,6 +97,20 @@ const AdminLayout = ({ children }) => {
               </Button>
             );
           })}
+
+          <Button
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              p: 1,
+              mx: 1,
+              color: "text.primary", // Text color
+              "&:hover": {},
+            }}
+            onClick={handleLogout}
+          >
+            {" "}
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
       <div style={{ width: "100%", paddingTop: "10px" }}>{children}</div>
@@ -55,29 +119,3 @@ const AdminLayout = ({ children }) => {
 };
 
 export default AdminLayout;
-{
-  /* <Button component={Link} to="/inbox" sx={{ color: "text.primary" }}>
-            Inbox
-          </Button>
-          <Button
-            component={Link}
-            to="/admin/users"
-            sx={{ color: "text.primary" }}
-          >
-            Users
-          </Button>
-          <Button
-            component={Link}
-            to="/admin/settings"
-            sx={{ color: "text.primary" }}
-          >
-            Settings
-          </Button>
-          <Button
-            component={Link}
-            to="/admin/reports"
-            sx={{ color: "text.primary" }}
-          >
-            Reports
-          </Button> */
-}

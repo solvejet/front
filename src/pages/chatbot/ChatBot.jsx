@@ -3,7 +3,7 @@ import { chatBots } from "../../constant/navBar";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import chatBotTitle from "../../assets/images/chatbot_title.svg";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbarQuickFilter } from "@mui/x-data-grid";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import AddNew from "./AddNew";
 const PlayButtonIcon = () => (
@@ -246,19 +246,13 @@ function DataGridDemo() {
         }}
         pageSizeOptions={[5]}
         disableRowSelectionOnClick
-        // sx={{
-        //   "& .MuiDataGrid-columnHeader": {
-        //     backgroundColor: "#1976d2", // Header background color
-        //     color: "#fff", // Header text color
-        //     fontWeight: "bold", // Header font weight
-        //   },
-        //   "& .MuiDataGrid-columnHeaderTitle": {
-        //     fontSize: "1.2rem", // Header title font size
-        //   },
-        //   "& .MuiDataGrid-iconButton": {
-        //     color: "#fff", // Sort icons color
-        //   },
-        // }}
+        components={{
+          Toolbar: () => (
+            <Box sx={{ padding: 1 }}>
+              <GridToolbarQuickFilter />
+            </Box>
+          ),
+        }}
       />
     </Box>
   );

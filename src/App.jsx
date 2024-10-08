@@ -26,67 +26,66 @@ function App() {
     <ThemeContextProvider>
       <CssBaseline />
       <Router>
-        <AdminLayout>
-          <div>
-            <Routes>
-              <Route
-                path={RouterPaths.LOGIN}
-                element={
-                  isAuthenticated ? (
-                    <Navigate to={RouterPaths.DASHBOARD} />
-                  ) : (
-                    <LoginPage />
-                  )
-                }
-              />
-              <Route
-                path={RouterPaths.DASHBOARD}
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={RouterPaths.INBOX}
-                element={
-                  <ProtectedRoute>
-                    <Inbox />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={RouterPaths.CHATBOT}
-                element={
-                  <ProtectedRoute>
-                    <ChatBot />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={RouterPaths.CHATBOT_FLOW}
-                element={
-                  <ProtectedRoute>
-                    <ChatBotFlow />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={RouterPaths.PHONEBOOK}
-                element={
-                  <ProtectedRoute>
-                    <PhoneBook />
-                  </ProtectedRoute>
-                }
-              />
-              {/* Redirect from the root path */}
-              <Route path="/" element={<Navigate to="/dashboard" />} />
-              {/* Catch-all route for invalid paths */}
-              <Route path="*" element={<Navigate to="/login" />} />
-            </Routes>
-            <ThemeToggleButton />
-          </div>
-        </AdminLayout>
+        {isAuthenticated && <AdminLayout />}
+        <div>
+          <Routes>
+            <Route
+              path={RouterPaths.LOGIN}
+              element={
+                isAuthenticated ? (
+                  <Navigate to={RouterPaths.DASHBOARD} />
+                ) : (
+                  <LoginPage />
+                )
+              }
+            />
+            <Route
+              path={RouterPaths.DASHBOARD}
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={RouterPaths.INBOX}
+              element={
+                <ProtectedRoute>
+                  <Inbox />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={RouterPaths.CHATBOT}
+              element={
+                <ProtectedRoute>
+                  <ChatBot />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={RouterPaths.CHATBOT_FLOW}
+              element={
+                <ProtectedRoute>
+                  <ChatBotFlow />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={RouterPaths.PHONEBOOK}
+              element={
+                <ProtectedRoute>
+                  <PhoneBook />
+                </ProtectedRoute>
+              }
+            />
+            {/* Redirect from the root path */}
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            {/* Catch-all route for invalid paths */}
+            <Route path="*" element={<Navigate to="/login" />} />
+          </Routes>
+          <ThemeToggleButton />
+        </div>
       </Router>
     </ThemeContextProvider>
   );
