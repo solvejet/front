@@ -9,8 +9,9 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Brush,
 } from "recharts";
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Typography, Paper, Button, useTheme } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
 import Table from "@mui/material/Table";
@@ -23,33 +24,74 @@ import { tablesData, data } from "../constant/dashboard/dashboardData";
 // Sample data (replace with real data)
 
 const Dashboard = () => {
+  const theme = useTheme();
   return (
     <>
       {/* First Chart */}
       <Box
         sx={{
           padding: 2,
-          backgroundColor: "#fff",
+          backgroundColor: theme.palette.background.paper, // Adjust for dark mode
           borderRadius: "8px",
           boxShadow: 3,
           width: "80%",
           margin: "0 auto",
+          position: "relative", // For positioning buttons
         }}
       >
+        {/* Zoom and Download Buttons */}
+        {/* <Box
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            display: "flex",
+            gap: 1,
+          }}
+        >
+          <Button variant="outlined" onClick={()=>{}}>
+            Zoom In
+          </Button>
+          <Button variant="outlined" onClick={()=>{}}>
+            Zoom Out
+          </Button>
+          <Button variant="outlined" onClick={()=>{}}>
+            Download
+          </Button>
+        </Box> */}
+
         <ResponsiveContainer width="100%" height={330}>
           <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
+            <CartesianGrid
+              stroke={theme.palette.divider}
+              strokeDasharray="3 3"
+            />
+            <XAxis dataKey="name" stroke={theme.palette.text.primary} />
+            <YAxis stroke={theme.palette.text.primary} />
+            <Tooltip
+              contentStyle={{ backgroundColor: theme.palette.background.paper }}
+            />
             <Legend />
-            <Line type="monotone" dataKey="Opened" stroke="#007bff" />
-            <Line type="monotone" dataKey="Pending" stroke="#28a745" />
-            <Line type="monotone" dataKey="Resolved" stroke="#ffc107" />
+            <Line
+              type="monotone"
+              dataKey="Opened"
+              stroke={theme.palette.primary.main}
+            />
+            <Line
+              type="monotone"
+              dataKey="Pending"
+              stroke={theme.palette.success.main}
+            />
+            <Line
+              type="monotone"
+              dataKey="Resolved"
+              stroke={theme.palette.warning.main}
+            />
+            <Brush dataKey="name" height={30} stroke="#8884d8" />
           </LineChart>
         </ResponsiveContainer>
       </Box>
-  
+
       {/* Second Chart and Table */}
       <Box
         component="section"
@@ -73,28 +115,38 @@ const Dashboard = () => {
               md: "50%", // 50% width on medium+ screens
             },
             m: 1,
+            backgroundColor: theme.palette.background.paper,
           }}
         >
-          <Paper sx={{ padding: 2, backgroundColor: "white" }}>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="active"
-                  stroke="#0088FE"
-                  activeDot={{ r: 8 }}
-                />
-                <Line type="monotone" dataKey="inactive" stroke="#00C49F" />
-              </LineChart>
-            </ResponsiveContainer>
-          </Paper>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={data}>
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke={theme.palette.divider}
+              />
+              <XAxis dataKey="name" stroke={theme.palette.text.primary} />
+              <YAxis stroke={theme.palette.text.primary} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: theme.palette.background.paper,
+                }}
+              />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="active"
+                stroke={theme.palette.primary.main}
+                activeDot={{ r: 8 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="inactive"
+                stroke={theme.palette.primary.main}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </Box>
-  
+
         {/* Table */}
         <Box
           sx={{
@@ -130,7 +182,6 @@ const Dashboard = () => {
       </Box>
     </>
   );
-  
 };
 
 export default Dashboard;
