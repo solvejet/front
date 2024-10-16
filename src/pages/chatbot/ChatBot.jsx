@@ -3,9 +3,16 @@ import { chatBots } from "../../constant/navBar";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import chatBotTitle from "../../assets/images/chatbot_title.svg";
-import { DataGrid, GridToolbarQuickFilter } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbarQuickFilter,
+  GridToolbar,
+} from "@mui/x-data-grid";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import AddNew from "./AddNew";
+import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 const PlayButtonIcon = () => (
   <svg
     className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1fxg462"
@@ -20,10 +27,11 @@ const PlayButtonIcon = () => (
 
 const ChatBot = () => {
   const [isSelected, setIsSelected] = useState(0);
-  const [isAdd, setIsAdd] = useState(false);
+
   return (
     <>
       <Box sx={{ display: "flex", gap: "10px" }}>
+        {/* leftbar */}
         <Box
           sx={{
             padding: 2,
@@ -69,14 +77,10 @@ const ChatBot = () => {
             width: "80%",
           }}
         >
-          {!isAdd ? (
-            <Box>
-              {isSelected === 0 && <AutoChatBot setIsAdd={setIsAdd} />}
-              {isSelected === 1 && <SaveTemplate />}
-            </Box>
-          ) : (
-            <AddNew />
-          )}
+          <Box>
+            {isSelected === 0 && <AutoChatBot />}
+            {isSelected === 1 && <SaveTemplate />}
+          </Box>
         </Box>
       </Box>
     </>
@@ -85,7 +89,8 @@ const ChatBot = () => {
 
 export default ChatBot;
 
-const AutoChatBot = ({ setIsAdd }) => {
+const AutoChatBot = () => {
+  const [isAdd, setIsAdd] = useState(false);
   const icon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -100,66 +105,70 @@ const AutoChatBot = ({ setIsAdd }) => {
   const handleAddNew = () => setIsAdd(true);
   return (
     <Box>
-      <Box
-        sx={{
-          bgcolor: "background.paper", // Uses theme-based background color
-          color: "text.primary",
-          borderRadius: "8px",
-          boxShadow: 3,
-          margin: 1,
-          padding: 2,
-        }}
-      >
-        <Box sx={{ display: "flex", gap: "10px" }}>
-          <Box sx={{ width: "50%" }}>
-            <Box sx={{ mt: 2 }}>
-              <img src={chatBotTitle} width="40%" height="40%" />
+      {!isAdd ? (
+        <Box
+          sx={{
+            bgcolor: "background.paper", // Uses theme-based background color
+            color: "text.primary",
+            borderRadius: "8px",
+            boxShadow: 3,
+            margin: 1,
+            padding: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", gap: "10px" }}>
+            <Box sx={{ width: "50%" }}>
+              <Box sx={{ mt: 2 }}>
+                <img src={chatBotTitle} width="40%" height="40%" />
+              </Box>
+              <Box sx={{ mt: 2 }}>
+                {" "}
+                <Typography
+                  variant="body1"
+                  sx={{
+                    margin: 0, // margin: 0px;
+                    fontSize: "0.9rem", // font-size: 0.75rem;
+                    letterSpacing: "0rem", // letter-spacing: 0rem;
+                    fontWeight: 400, // font-weight: 400;
+                    lineHeight: "1rem", // line-height: 1rem;
+                    fontFamily: "Outfit", // font-family: Outfit;
+                    color: "gray", // color: gray;
+                  }}
+                >
+                  Enhance customer engagement and drive sales by automating your
+                  responses using pre-made chat flows. With tailored
+                  conversation paths, you can efficiently interact with
+                  customers, provide instant assistance.
+                </Typography>
+              </Box>
+              <Box sx={{ mt: 2, width: "50%" }}>
+                <Button
+                  variant="text"
+                  size="small"
+                  startIcon={icon}
+                  component={Link}
+                  sx={{
+                    display: { xs: "none", sm: "flex" },
+                    p: 1,
+                    mx: 1,
+                    color: "text.primary",
+                    "&:hover": {},
+                    bgcolor: "rgb(53, 212, 114)",
+                  }}
+                  onClick={handleAddNew}
+                >
+                  Add New
+                </Button>
+              </Box>
             </Box>
-            <Box sx={{ mt: 2 }}>
-              {" "}
-              <Typography
-                variant="body1"
-                sx={{
-                  margin: 0, // margin: 0px;
-                  fontSize: "0.9rem", // font-size: 0.75rem;
-                  letterSpacing: "0rem", // letter-spacing: 0rem;
-                  fontWeight: 400, // font-weight: 400;
-                  lineHeight: "1rem", // line-height: 1rem;
-                  fontFamily: "Outfit", // font-family: Outfit;
-                  color: "gray", // color: gray;
-                }}
-              >
-                Enhance customer engagement and drive sales by automating your
-                responses using pre-made chat flows. With tailored conversation
-                paths, you can efficiently interact with customers, provide
-                instant assistance.
-              </Typography>
+            <Box sx={{ width: "50%" }}>
+              <Box sx={{ margin: "auto" }}>play button</Box>
             </Box>
-            <Box sx={{ mt: 2, width: "50%" }}>
-              <Button
-                variant="text"
-                size="small"
-                startIcon={icon}
-                component={Link}
-                sx={{
-                  display: { xs: "none", sm: "flex" },
-                  p: 1,
-                  mx: 1,
-                  color: "text.primary",
-                  "&:hover": {},
-                  bgcolor: "rgb(53, 212, 114)",
-                }}
-                onClick={handleAddNew}
-              >
-                Add New
-              </Button>
-            </Box>
-          </Box>
-          <Box sx={{ width: "50%" }}>
-            <Box sx={{ margin: "auto" }}>play button</Box>
           </Box>
         </Box>
-      </Box>
+      ) : (
+        <AddNew setIsAdd={setIsAdd}/>
+      )}
       <Box
         sx={{
           bgcolor: "background.paper", // Uses theme-based background color
@@ -176,9 +185,131 @@ const AutoChatBot = ({ setIsAdd }) => {
   );
 };
 const SaveTemplate = () => {
+  const columns = [
+    // {
+    //   field: "checkbox",
+    //   headerName: "",
+    //   width: 50,
+    //   renderCell: (params) => (
+    //     <input
+    //       type="checkbox"
+    //       checked={params.row.selected || false}
+    //       onChange={() =>
+    //         params.api.setRowData((prev) => {
+    //           const newData = [...prev];
+    //           newData[params.rowIndex].selected =
+    //             !newData[params.rowIndex].selected;
+    //           return newData;
+    //         })
+    //       }
+    //     />
+    //   ),
+    // },
+
+    { field: "id", headerName: "ID", width: 250 },
+    {
+      field: "title",
+      headerName: "Title",
+      width: 250,
+      editable: true,
+    },
+    {
+      field: "type",
+      headerName: "Type",
+      width: 250,
+      editable: true,
+    },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      // type: "number",
+      width: 250,
+      editable: true,
+    },
+  ];
+
+  const initialRows = [
+    {
+      id: 1,
+      title: "title",
+      type: "Text",
+      createdAt: "2024-02-08 20:47:59",
+    },
+    {
+      id: 2,
+      title: "title",
+      type: "Video",
+      createdAt: "2024-02-08 20:47:59",
+    },
+  ];
+  const [rows, setRows] = useState(initialRows);
+  const selectedCount = rows.filter((row) => row.selected).length;
+
+  const handleDelete = () => {
+    setRows(rows.filter((row) => !row.selected));
+  };
   return (
     <Box>
-      <Box>SaveTemplate</Box>
+      <Box
+        sx={{
+          padding: 2,
+          bgcolor: "background.paper", // Uses theme-based background color
+          color: "text.primary",
+          borderRadius: "8px",
+          boxShadow: 3,
+          margin: "0 auto",
+          width: "100%",
+          m: 1,
+        }}
+      >
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          component="h2"
+          align="left"
+          gutterBottom
+        >
+          Templates {selectedCount > 0 && `(${selectedCount})`}
+          <IconButton
+            onClick={handleDelete}
+            disabled={selectedCount === 0}
+            color="secondary"
+            sx={{ marginLeft: 1 }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Typography>
+        <DataGrid
+          checkboxSelection
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5,
+              },
+            },
+          }}
+          pageSizeOptions={[5]}
+          disableRowSelectionOnClick
+          disableColumnFilter
+          disableColumnSelector
+          disableDensitySelector
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+            },
+          }}
+          // onSelectionModelChange={(newSelection) => {
+          //   const updatedRows = rows.map((row) => ({
+          //     ...row,
+          //     selected: newSelection.includes(row.id),
+          //   }));
+          //   setRows(updatedRows);
+          // }}
+        />
+      </Box>
     </Box>
   );
 };
