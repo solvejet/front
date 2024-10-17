@@ -10,16 +10,9 @@ const Component = ({ isSelected, text, textId, setText, setId }) => {
       </header>
       <section className="p-2 text-info-emphasis">
         <hr />
-        {isSelected ? (
-          <EditMessage
-            value={text}
-            textId={textId}
-            setId={setId}
-            setText={setText}
-          />
-        ) : (
-          <NodeSelection />
-        )}
+
+        <NodeSelection />
+
         <hr />
       </section>
     </div>
@@ -38,8 +31,6 @@ export const Sidebar = ({ isSelected, text, textId, setText, setId }) => {
           setId={setId}
         />
       </div>
-    
-     
     </div>
   );
 };

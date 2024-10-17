@@ -71,6 +71,8 @@ const ChatBotFlow = () => {
             type: type, // Set the node type here
             heading: label,
             content: "", // Empty content by default
+            type,  // Pass the type (text/audio) as well
+            setNodes,  // Pass the setNodes function to be used in the custom node
           },
         })
       );
