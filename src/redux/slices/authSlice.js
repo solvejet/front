@@ -7,7 +7,7 @@ export const loginUser = createAsyncThunk(
   'auth/login',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, userData);
+      const response = await axios.post(`${API_URL}/auth/login`, userData);
       // Store the JWT token in localStorage
       localStorage.setItem('token', response.data.token);
       return response.data;
