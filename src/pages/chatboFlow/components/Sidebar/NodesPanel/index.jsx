@@ -19,7 +19,7 @@ export const NodesPanel = () => {
             aria-expanded="true"
             aria-controls="collapse-panel"
           >
-            Nodes Panel
+            Messages
           </button>
         </div>
         <div
@@ -30,11 +30,57 @@ export const NodesPanel = () => {
           <div className="accordion-body">
             <button
               type="button"
-              className="btn btn-outline-primary"
+              className="btn btn-outline-primary m-1"
+              draggable
+              onDragStart={(e) => dragStart(e, "messageNode", "Text Message")}
+            >
+              Text message
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-primary m-1"
+              draggable
+              onDragStart={(e) => dragStart(e, "audioNode", "Audio Message")}
+            >
+              Audio Message
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="accordion-item bg-body-tertiary">
+        <div className="accordion-header">
+          <button
+            className="accordion-button collapsed shadow-none bg-success-subtle text-success-emphasis"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapse-panel"
+            aria-expanded="true"
+            aria-controls="collapse-panel"
+          >
+            Actions
+          </button>
+        </div>
+        <div
+          id="collapse-panel"
+          className="accordion-collapse collapse"
+          data-bs-parent="#node-panel"
+        >
+          <div className="accordion-body">
+            <button
+              type="button"
+              className="btn btn-outline-primary m-1"
               draggable
               onDragStart={(e) => dragStart(e, "customNode", "dummy text")}
             >
-              Text message
+              Assign Chat To Agent
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-primary m-1"
+              draggable
+              onDragStart={(e) => dragStart(e, "customNode", "dummy text")}
+            >
+              Disable Chat Till
             </button>
           </div>
         </div>

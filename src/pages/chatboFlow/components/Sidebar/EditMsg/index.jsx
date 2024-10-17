@@ -31,6 +31,7 @@ export const EditMessage = ({ value, textId, setText, setId }) => {
   };
   return (
     <div className="d-grid gap-0 row-gap-3">
+      {/* for editing */}
       <div className="w-75 justify-self-center">
         <label htmlFor="edit-box" className="form-label">
           <h5>Edit Message:</h5>
@@ -53,6 +54,8 @@ export const EditMessage = ({ value, textId, setText, setId }) => {
       >
         Submit
       </button>
+      {/* for editing */}
+
       {isSaved && (
         <div
           className={`alert alert-${isSaved?.mode} text-center`}

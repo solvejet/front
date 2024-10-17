@@ -55,9 +55,8 @@ const ChatBotFlow = () => {
       const type = e.dataTransfer.getData("dataType");
       const label = e.dataTransfer.getData("label");
 
-      if (typeof type === "undefined" || !type) {
-        return;
-      }
+      if (!type) return;
+
       const position = rfInstance.screenToFlowPosition({
         x: e.clientX,
         y: e.clientY,
@@ -66,11 +65,12 @@ const ChatBotFlow = () => {
       setNodes((node) =>
         node.concat({
           id: generateId(),
-          type: type,
-          position: position,
+          type: "customNode",
+          position,
           data: {
-            heading: "Send Message",
-            content: label,
+            type: type, // Set the node type here
+            heading: label,
+            content: "", // Empty content by default
           },
         })
       );
@@ -83,32 +83,53 @@ const ChatBotFlow = () => {
     [setEdges]
   );
   return (
-    <div className="container">
-      <ReactFlowProvider>
-        <ReactFlow
-          ref={rfWrapper}
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          nodeTypes={nodeTypes}
-          onNodeClick={onNodeClick}
-          onDragOver={onDragOver}
-          onDrop={onDrop}
-          onInit={setRfInstance}
+    <ReactFlowProvider>
+      <Box
+        sx={{
+          display: "flex",
+          gap: "10px",
+          border: "1px solid blue",
+          width: "100%",
+        }}
+      >
+        <Box
+          sx={{
+            padding: 2,
+            bgcolor: "background.paper", // Uses theme-based background color
+            color: "text.primary",
+            borderRadius: "8px",
+            boxShadow: 3,
+            margin: "auto",
+            width: "70%",
+            height: "85vh",
+            border: "1px solid red",
+          }}
         >
-          <Controls position="top-left" />
-          <Background variant="dots" gap={12} size={1} />
-        </ReactFlow>
+          <ReactFlow
+            ref={rfWrapper}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            onNodeClick={onNodeClick}
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            onInit={setRfInstance}
+          >
+            <Controls position="top-left" />
+            <Background variant="dots" gap={12} size={1} />
+          </ReactFlow>
+        </Box>
 
-        <SaveBtn />
-        <div
+        {/* <SaveBtn /> */}
+        {/* <div
           style={{ position: "absolute", top: "20px", right: "-105px" }}
           onClick={toggleDrawer}
         >
           click me
-        </div>
+        </div> */}
         {/*  */}
         <Box
           sx={{
@@ -117,32 +138,21 @@ const ChatBotFlow = () => {
             color: "text.primary",
             borderRadius: "8px",
             boxShadow: 3,
-            margin:"auto"
+            margin: "auto",
+            width: "30%",
+            border: "1px solid red",
           }}
         >
-          <Drawer
-            anchor="right"
-            open={isDrawer}
-            onClose={() => toggleDrawer()}
-            sx={{
-              "& .MuiDrawer-paper": {
-                width: "40%", // Set the width to 40% of the screen
-                minWidth: "40vw", // Ensure it takes a minimum of 40% of the viewport width
-              },
-            }}
-          >
-            <div>Some Content</div>
-            <Sidebar
-              isSelected={isSelected}
-              text={editText}
-              setText={setEditText}
-              textId={id}
-              setId={setId}
-            />
-          </Drawer>
+          <Sidebar
+            isSelected={isSelected}
+            text={editText}
+            setText={setEditText}
+            textId={id}
+            setId={setId}
+          />
         </Box>
-      </ReactFlowProvider>
-    </div>
+      </Box>
+    </ReactFlowProvider>
   );
 };
 export default ChatBotFlow;
