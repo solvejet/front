@@ -10,14 +10,17 @@ import { TextField, IconButton, Button, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { useEffect } from "react";
 
 export const CustomNode = ({ data, selected }) => {
-  const { setNodes, content, type } = data;
+  const { setNodes, type } = data;
   const { nodeInternals, edges } = useStore((st) => ({
     nodeInternals: st.nodeInternals,
     edges: st.edges,
   }));
-
+  useEffect(() => {
+    console.log(data, "data");
+  }, [data]);
   const nodeId = useNodeId();
 
   // Ensure only one source connection per node
@@ -31,7 +34,9 @@ export const CustomNode = ({ data, selected }) => {
   const [message, setMessage] = useState(data.content || "");
   const [options, setOptions] = useState([]);
   const [audioFile, setAudioFile] = useState(null);
-
+  const [videoFile, setVideoFile] = useState(null);
+  const [documentFile, setDocumentFile] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   // Handlers for message input and options
   const handleInputChange = (e) => {
     setMessage(e.target.value);
@@ -48,7 +53,9 @@ export const CustomNode = ({ data, selected }) => {
   const addOption = () => {
     setOptions((prevOptions) => [...prevOptions, ""]);
   };
-
+  const removeOption = (index) => {
+    setOptions((prevOptions) => prevOptions.filter((_, i) => i !== index));
+  };
   const handleOptionChange = (index, value) => {
     const updatedOptions = [...options];
     updatedOptions[index] = value;
@@ -66,7 +73,36 @@ export const CustomNode = ({ data, selected }) => {
       removeNodeCallback(nodeId);
     }
   };
-
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Assuming you're saving the file to state
+      setImageFile(file);
+      // Perform any additional logic, such as validation or uploading to a server
+      console.log("Image file selected:", file);
+    }
+  };
+  
+  const handleVideoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Assuming you're saving the file to state
+      setVideoFile(file);
+      // Perform any additional logic, such as validation or uploading to a server
+      console.log("Video file selected:", file);
+    }
+  };
+  
+  const handleDocumentUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Assuming you're saving the file to state
+      setDocumentFile(file);
+      // Perform any additional logic, such as validation or uploading to a server
+      console.log("Document file selected:", file);
+    }
+  };
+  
   return (
     <div
       className={`card p-1 ${
@@ -101,44 +137,47 @@ export const CustomNode = ({ data, selected }) => {
 
       <div className="card-body">
         {/* Conditional rendering based on the type of node */}
-        {data.type === "text" ? (
-          <>
-            {/* Text Message Input */}
+        {data.type === "messageNode" ? (
+        <>
+        <TextField
+          label="Type your message"
+          value={message}
+          onChange={handleInputChange}
+          fullWidth
+          multiline
+          rows={2}
+          sx={{ marginBottom: "10px" }}
+        />
+      
+        {/* Dynamic option fields */}
+        {options.map((option, index) => (
+          <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
             <TextField
-              label="Type your message"
-              value={message}
-              onChange={handleInputChange}
+              label={`Option ${index + 1}`}
+              value={option}
+              onChange={(e) => handleOptionChange(index, e.target.value)}
               fullWidth
-              multiline
-              rows={2}
-              sx={{ marginBottom: "10px" }}
+              sx={{ marginRight: "10px" }}
             />
-
-            {/* Render dynamic options */}
-            {options.map((option, index) => (
-              <TextField
-                key={index}
-                label={`Option ${index + 1}`}
-                value={option}
-                onChange={(e) => handleOptionChange(index, e.target.value)}
-                fullWidth
-                sx={{ marginBottom: "10px" }}
-              />
-            ))}
-
-            {/* Add option button */}
-            <Button
-              variant="outlined"
-              fullWidth
-              sx={{ color: "#f28b82", borderColor: "#f28b82" }}
-              onClick={addOption}
-            >
-              Add option
-            </Button>
-          </>
-        ) : (
+            <IconButton onClick={() => removeOption(index)}>
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        ))}
+      
+        {/* Add option button */}
+        <Button
+          variant="outlined"
+          fullWidth
+          sx={{ color: "#f28b82", borderColor: "#f28b82" }}
+          onClick={addOption}
+        >
+          Add option
+        </Button>
+      </>
+      
+        ) : data.type === "audioNode" ? (
           <>
-            {/* Audio Upload for Audio Node */}
             <Typography variant="body1" gutterBottom>
               Upload an audio message:
             </Typography>
@@ -161,10 +200,81 @@ export const CustomNode = ({ data, selected }) => {
               />
             </Button>
           </>
-        )}
+        ) : data.type === "imageNode" ? (
+          <>
+            <Typography variant="body1" gutterBottom>
+              Upload an image:
+            </Typography>
+            <Button
+              variant="contained"
+              component="label"
+              startIcon={<UploadFileIcon />}
+              sx={{
+                marginBottom: "10px",
+                backgroundColor: "#f28b82",
+                color: "#fff",
+              }}
+            >
+              {imageFile ? imageFile.name : "Choose Image"}
+              <input
+                type="file"
+                hidden
+                onChange={handleImageUpload}
+                accept="image/*"
+              />
+            </Button>
+          </>
+        ) : data.type === "videoNode" ? (
+          <>
+            <Typography variant="body1" gutterBottom>
+              Upload a video:
+            </Typography>
+            <Button
+              variant="contained"
+              component="label"
+              startIcon={<UploadFileIcon />}
+              sx={{
+                marginBottom: "10px",
+                backgroundColor: "#f28b82",
+                color: "#fff",
+              }}
+            >
+              {videoFile ? videoFile.name : "Choose Video"}
+              <input
+                type="file"
+                hidden
+                onChange={handleVideoUpload}
+                accept="video/*"
+              />
+            </Button>
+          </>
+        ) : data.type === "documentNode" ? (
+          <>
+            <Typography variant="body1" gutterBottom>
+              Upload a document:
+            </Typography>
+            <Button
+              variant="contained"
+              component="label"
+              startIcon={<UploadFileIcon />}
+              sx={{
+                marginBottom: "10px",
+                backgroundColor: "#f28b82",
+                color: "#fff",
+              }}
+            >
+              {documentFile ? documentFile.name : "Choose Document"}
+              <input
+                type="file"
+                hidden
+                onChange={handleDocumentUpload}
+                accept="application/*"
+              />
+            </Button>
+          </>
+        ) : null}
       </div>
 
-      {/* Handles for connecting nodes */}
       <Handle
         type="source"
         position={Position.Bottom}

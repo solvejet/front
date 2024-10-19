@@ -23,9 +23,8 @@ let id = 1;
 const generateId = () => `dropId_${id++}`;
 const ChatBotFlow = () => {
   const rfWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
   const [rfInstance, setRfInstance] = useState(null);
   const [editText, setEditText] = useState("");
   const [id, setId] = useState(null);
@@ -71,8 +70,7 @@ const ChatBotFlow = () => {
             type: type, // Set the node type here
             heading: label,
             content: "", // Empty content by default
-            type,  // Pass the type (text/audio) as well
-            setNodes,  // Pass the setNodes function to be used in the custom node
+            setNodes, // Pass the setNodes function to be used in the custom node
           },
         })
       );
@@ -125,13 +123,7 @@ const ChatBotFlow = () => {
           </ReactFlow>
         </Box>
 
-        {/* <SaveBtn /> */}
-        {/* <div
-          style={{ position: "absolute", top: "20px", right: "-105px" }}
-          onClick={toggleDrawer}
-        >
-          click me
-        </div> */}
+      
         {/*  */}
         <Box
           sx={{
@@ -143,6 +135,10 @@ const ChatBotFlow = () => {
             margin: "auto",
             width: "30%",
             border: "1px solid red",
+            minHeight:"inherit",
+            minHeight:"85vh",
+            maxHeight:"85vh",
+            overflowY:"auto"
           }}
         >
           <Sidebar
