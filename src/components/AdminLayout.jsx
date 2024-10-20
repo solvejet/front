@@ -51,7 +51,7 @@ const AdminLayout = ({ children }) => {
     setProfileMenuAnchorEl(null);
   };
   return (
-    <div style={{ width: "100vw", margin: 0, padding: 0 }}>
+    <div style={{  margin: 0, padding: 0 }}>
       <AppBar
         position="static"
         sx={{ bgcolor: "card.background", boxShadow: "none" }}

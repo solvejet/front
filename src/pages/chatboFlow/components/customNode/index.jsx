@@ -23,11 +23,11 @@ export const CustomNode = ({ data, selected }) => {
   }, [data]);
   const nodeId = useNodeId();
 
-  // Ensure only one source connection per node
   const singleSourceConnect = useMemo(() => {
     const node = nodeInternals.get(nodeId);
     const connectedEdges = getConnectedEdges([node], edges);
-    return connectedEdges.length < 1;
+    
+    return connectedEdges.filter(edge => edge.source === nodeId).length < 2;
   }, [nodeInternals, edges, nodeId]);
 
   // State to manage the text and additional options

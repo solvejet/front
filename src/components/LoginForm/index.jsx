@@ -32,6 +32,7 @@ const LoginForm = () => {
     let timeoutId;
     if (success) {
       timeoutId = setTimeout(() => {
+        dispatch(clearMessages())
         navigate('/dashboard');
       }, 1000);
     }

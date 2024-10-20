@@ -26,6 +26,7 @@ function App() {
     <ThemeContextProvider>
       <CssBaseline />
       <Router>
+        {/* navBar */}
         {isAuthenticated && <AdminLayout />}
         <div>
           <Routes>

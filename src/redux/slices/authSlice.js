@@ -8,14 +8,15 @@ export const loginUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_URL}/auth/login`, userData);
-      console.log(response,"response")
+      console.log(response, "response")
       // Store the JWT token in localStorage
-      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('token', response.data.refreshToken);
       return response.data;
     } catch (error) {
+      console.log(error)
       return rejectWithValue({
-        message: error.response?.data?.message || 'Login failed',
-        status: error.response?.status,
+        message: error.response?.data?.error || error?.message || 'Login failed',
+        status: error.response?.statusCode,
       });
     }
   }

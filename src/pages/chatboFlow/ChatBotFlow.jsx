@@ -6,9 +6,9 @@ import ReactFlow, {
   addEdge,
   useEdgesState,
   useNodesState,
+  MiniMap,
 } from "reactflow";
 import "./ChatBotFlow.css";
-import Drawer from "@mui/material/Drawer";
 
 import "reactflow/dist/style.css";
 import { SaveBtn } from "./components/SaveChanges";
@@ -24,7 +24,7 @@ const generateId = () => `dropId_${id++}`;
 const ChatBotFlow = () => {
   const rfWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [rfInstance, setRfInstance] = useState(null);
   const [editText, setEditText] = useState("");
   const [id, setId] = useState(null);
@@ -79,9 +79,21 @@ const ChatBotFlow = () => {
   );
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge({ ...params, id: "50" }, eds)),
+    (params) => {
+      setEdges((eds) => {
+        const isDuplicate = eds.some(
+          (edge) =>
+            edge.source === params.source && edge.target === params.target
+        );
+        if (isDuplicate) {
+          return eds; // Prevent adding duplicate edges
+        }
+        return addEdge(params, eds);
+      });
+    },
     [setEdges]
   );
+
   return (
     <ReactFlowProvider>
       <Box
@@ -117,13 +129,14 @@ const ChatBotFlow = () => {
             onDragOver={onDragOver}
             onDrop={onDrop}
             onInit={setRfInstance}
+            proOptions={{ hideAttribution: true }}
           >
+            <MiniMap />
             <Controls position="top-left" />
             <Background variant="dots" gap={12} size={1} />
           </ReactFlow>
         </Box>
 
-      
         {/*  */}
         <Box
           sx={{
@@ -135,10 +148,9 @@ const ChatBotFlow = () => {
             margin: "auto",
             width: "30%",
             border: "1px solid red",
-            minHeight:"inherit",
-            minHeight:"85vh",
-            maxHeight:"85vh",
-            overflowY:"auto"
+            minHeight: "85vh",
+            maxHeight: "85vh",
+            overflowY: "auto",
           }}
         >
           <Sidebar
