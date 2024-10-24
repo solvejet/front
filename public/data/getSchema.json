@@ -1,0 +1,65 @@
+{
+    "fields": {
+        "name": {
+            "type": "String",
+            "required": true,
+            "minlength": 2,
+            "maxlength": 50
+        },
+        "number": {
+            "type": "String",
+            "required": true,
+            "pattern": {},
+            "unique": true
+        },
+        "assignedAdmin": {
+            "type": "ObjectId",
+            "ref": "Admin",
+            "required": false
+        },
+        "Car Type": {
+            "type": "String",
+            "required": true,
+            "enum": [
+                "Bike",
+                "Gaadi"
+            ]
+        }
+    },
+    "supportedTypes": {
+        "string": {
+            "allowedOptions": [
+                "required",
+                "minlength",
+                "maxlength",
+                "enum",
+                "default",
+                "trim",
+                "lowercase",
+                "uppercase"
+            ]
+        },
+        "number": {
+            "allowedOptions": [
+                "required",
+                "min",
+                "max",
+                "default"
+            ]
+        },
+        "boolean": {
+            "allowedOptions": [
+                "required",
+                "default"
+            ]
+        },
+        "date": {
+            "allowedOptions": [
+                "required",
+                "min",
+                "max",
+                "default"
+            ]
+        }
+    }
+}

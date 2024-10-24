@@ -35,6 +35,8 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import LastPageIcon from "@mui/icons-material/LastPage";
 import Loader from "../../components/loader/Loader";
+import { createUser } from "../../api/users/createUser";
+import AddSchema from "./component/addSchema/AddSchema";
 
 const generateColumnsFromSchema = (schema) => {
   return Object.keys(schema).map((key) => ({
@@ -145,9 +147,12 @@ function TablePaginationActions(props) {
 
 const PhoneBook = () => {
   const [open, setOpen] = useState(false);
+  const [isSchemaModel, setIsSchemaModel] = useState(false);
   const [isAssignOpen, setIsAssignOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleSchemaAddOpen = () => setIsSchemaModel(true);
+  const handlSchemaAddClose = () => setIsSchemaModel(false);
   const handleAssignOpen = () => setIsAssignOpen(true);
   const handleAssignClose = () => setIsAssignOpen(false);
   const [columns, setColumns] = useState([]); // State for table columns
@@ -202,7 +207,11 @@ const PhoneBook = () => {
   //     },
   //   },
   // ];
-  const handleAddContact = (e) => console.log(e);
+  const handleAddContact = async (userData) => {
+    const token = localStorage.getItem("token");
+    const { data, error } = await createUser(token, userData);
+    console.log(data, error.message);
+  };
   // const rows = [
   //   {
   //     id: 0,
@@ -267,6 +276,7 @@ const PhoneBook = () => {
           handleClose={handleClose}
           handleAddContact={handleAddContact}
         />
+        <AddSchema isSchemaModel={isSchemaModel} handlSchemaAddClose={handlSchemaAddClose} />
         <AssignModal
           isAssignOpen={isAssignOpen}
           handleAssignClose={handleAssignClose}
@@ -293,7 +303,7 @@ const PhoneBook = () => {
             component={Link}
             sx={{
               display: { xs: "none", sm: "flex" },
-              p: 2,
+              p: 1,
               mx: 1,
               color: "text.primary",
               "&:hover": {},
@@ -301,6 +311,22 @@ const PhoneBook = () => {
             }}
           >
             Add Contact
+          </Button>
+          <Button
+            onClick={handleSchemaAddOpen}
+            variant="text"
+            size="small"
+            component={Link}
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              p: 1,
+              mx: 1,
+              color: "text.primary",
+              "&:hover": {},
+              bgcolor: "rgb(53, 212, 114)",
+            }}
+          >
+            Add Schema
           </Button>
         </Box>
         <Box
@@ -439,15 +465,21 @@ const style = {
 const AddModal = ({ open, handleClose, handleAddContact }) => {
   const [addContact, setAddContact] = useState({
     name: "",
-    phNumber: "",
+    number: "",
     group: "",
+    adminId: null,
   });
   const [errors, setErrors] = useState({});
-
+  const token = localStorage.getItem("token");
+  if (!token) return;
+  const decoded = jwtDecode(token);
+  const id = decoded?.id; // Using optional chainin
+  if (!id) return;
+  // setAddContact({ ...addContact, adminId: id });
   const validateForm = () => {
     const newErrors = {};
     if (!addContact.name) newErrors.name = "Name is required";
-    if (!addContact.phNumber) newErrors.phNumber = "Phone Number is required";
+    if (!addContact.number) newErrors.number = "Phone Number is required";
     if (!addContact.group) newErrors.group = "Group is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -455,10 +487,14 @@ const AddModal = ({ open, handleClose, handleAddContact }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "phNumber" && Number(value) < 0) {
+    if (name === "number" && Number(value) < 0) {
       return; // Do not update the state for negative numbers
     }
-    setAddContact({ ...addContact, [e.target.name]: e.target.value });
+    setAddContact({
+      ...addContact,
+      adminId: id,
+      [e.target.name]: e.target.value,
+    });
     // Clear error for the field being edited
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
@@ -466,11 +502,13 @@ const AddModal = ({ open, handleClose, handleAddContact }) => {
   const handleSubmit = () => {
     if (validateForm()) {
       handleAddContact(addContact);
+
       // Reset the form state after submission
       setAddContact({
         name: "",
-        phNumber: "",
+        number: "",
         group: "",
+        adminId: null,
       });
       handleClose();
     }
@@ -505,11 +543,11 @@ const AddModal = ({ open, handleClose, handleAddContact }) => {
           <TextField
             fullWidth
             label="Phone Number"
-            name="phNumber"
-            value={addContact.phNumber}
+            name="number"
+            value={addContact.number}
             onChange={handleChange}
-            error={!!errors.phNumber}
-            helperText={errors.phNumber}
+            error={!!errors.number}
+            helperText={errors.number}
             margin="normal"
             variant="outlined"
             type="number" // Set the input type to number
