@@ -7,10 +7,9 @@ export const userColumns = async (token) => {
                 'Content-Type': 'application/json',
                 'Custom-Header': 'Custom-Value'
             }
-        });
-        return response.data;  // Assuming you want to return the response data
+        }); return { data: response.data, error: null };  // Return data and null error return response.data;  // Assuming you want to return the response data
     } catch (error) {
         console.error("Error fetching columns:", error);
-        throw error;  // Optionally, rethrow or handle the error as needed
+        return { data: null, error };  // Return null data and error
     }
 }

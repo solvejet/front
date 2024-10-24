@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import {
   Box,
   Button,
@@ -18,15 +19,129 @@ import { jwtDecode } from "jwt-decode";
 import { userColumns } from "../../api/users/columns/getColumns";
 import { getUserList } from "../../api/users/getUserList";
 import { useTable } from "react-table";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
+import FirstPageIcon from "@mui/icons-material/FirstPage";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import LastPageIcon from "@mui/icons-material/LastPage";
+import Loader from "../../components/loader/Loader";
+
 const generateColumnsFromSchema = (schema) => {
   return Object.keys(schema).map((key) => ({
     Header: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize the header
     accessor: key, // Set the accessor to the key
     Cell: ({ cell }) => {
-      return cell.value !== undefined ? cell.value : "null"; // Show 'null' if the value is missing
+      const value = cell.value;
+
+      // Check if the value is an object (e.g., referralSource)
+      if (typeof value === "object" && value !== null) {
+        // Display key:value pairs
+        return (
+          <div>
+            {Object.entries(value).map(([k, v]) => (
+              <div key={k}>
+                <strong>{k}:</strong> {v}
+              </div>
+            ))}
+          </div>
+        );
+      }
+
+      // If the value is not an object, display it as is or 'null'
+      return value !== undefined ? value : "null";
     },
   }));
 };
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
+
+function TablePaginationActions(props) {
+  const theme = useTheme();
+  const { count, page, rowsPerPage, onPageChange } = props;
+
+  const handleFirstPageButtonClick = (event) => {
+    onPageChange(event, 0);
+  };
+
+  const handleBackButtonClick = (event) => {
+    onPageChange(event, page - 1);
+  };
+
+  const handleNextButtonClick = (event) => {
+    onPageChange(event, page + 1);
+  };
+
+  const handleLastPageButtonClick = (event) => {
+    onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  };
+
+  return (
+    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="first page"
+      >
+        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+      </IconButton>
+      <IconButton
+        onClick={handleBackButtonClick}
+        disabled={page === 0}
+        aria-label="previous page"
+      >
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowRight />
+        ) : (
+          <KeyboardArrowLeft />
+        )}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="next page"
+      >
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowLeft />
+        ) : (
+          <KeyboardArrowRight />
+        )}
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page"
+      >
+        {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
+      </IconButton>
+    </Box>
+  );
+}
 
 const PhoneBook = () => {
   const [open, setOpen] = useState(false);
@@ -38,6 +153,9 @@ const PhoneBook = () => {
   const [columns, setColumns] = useState([]); // State for table columns
   const [tableData, setTableData] = useState([]);
   const [schema, setSchema] = useState({}); // State for the schema object
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0);
+  const [loader, setLoader] = useState(false);
   // const columns = [
   //   { field: "customerId", headerName: "Customer ID", width: 250 },
   //   {
@@ -109,11 +227,19 @@ const PhoneBook = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const getColumns = async () => {
-      const response = await userColumns(token);
-      console.log(response);
-      const schemaData = response?.schema || {};
+      setLoader(true);
+      const { data, error } = await userColumns(token);
+      const schemaData = data?.schema || {};
+      if (error) {
+        // Handle error (e.g., show a message to the user)
+        console.error("Failed to fetch columns:", error);
+      } else {
+        setSchema(schemaData); // Store schema in state
+        setColumns(generateColumnsFromSchema(schemaData)); // Generate columns based on schema
+      }
       setSchema(schemaData); // Store schema in state
       setColumns(generateColumnsFromSchema(schemaData)); // Generate columns based on schema
+      setLoader(false);
     };
     const userList = async () => {
       const response = await getUserList(token);
@@ -123,71 +249,83 @@ const PhoneBook = () => {
     getColumns();
     userList();
   }, []);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  // need to add no-data condition
   return (
-    <Box sx={{}}>
-      <AddModal
-        open={open}
-        handleClose={handleClose}
-        handleAddContact={handleAddContact}
-      />
-      <AssignModal
-        isAssignOpen={isAssignOpen}
-        handleAssignClose={handleAssignClose}
-      />
-      <Box
-        sx={{
-          padding: 2,
-          bgcolor: "background.paper", // Uses theme-based background color
-          color: "text.primary",
-          borderRadius: "8px",
-          boxShadow: 3,
-          margin: "0 auto",
-          width: "100%",
-          m: 1,
-          display: "flex",
-          flexDirection: "row-reverse",
-        }}
-      >
-        <Button
-          onClick={handleOpen}
-          variant="text"
-          size="small"
-          component={Link}
+    <>
+      {loader ? <Loader /> : <></>}
+      <Box sx={{}}>
+        <AddModal
+          open={open}
+          handleClose={handleClose}
+          handleAddContact={handleAddContact}
+        />
+        <AssignModal
+          isAssignOpen={isAssignOpen}
+          handleAssignClose={handleAssignClose}
+        />
+
+        <Box
           sx={{
-            display: { xs: "none", sm: "flex" },
-            p: 2,
-            mx: 1,
+            padding: 2,
+            bgcolor: "background.paper", // Uses theme-based background color
             color: "text.primary",
-            "&:hover": {},
-            bgcolor: "rgb(53, 212, 114)",
+            borderRadius: "8px",
+            boxShadow: 3,
+            margin: "0 auto",
+            width: "100%",
+            m: 1,
+            display: "flex",
+            flexDirection: "row-reverse",
           }}
         >
-          Add Contact
-        </Button>
-      </Box>
-      <Box
-        sx={{
-          padding: 2,
-          bgcolor: "background.paper", // Uses theme-based background color
-          color: "text.primary",
-          borderRadius: "8px",
-          boxShadow: 3,
-          margin: "0 auto",
-          width: "100%",
-          m: 1,
-          p: 2,
-        }}
-      >
-        <Typography
-          id="modal-modal-title"
-          variant="h6"
-          component="h2"
-          align="left"
-          gutterBottom
+          <Button
+            onClick={handleOpen}
+            variant="text"
+            size="small"
+            component={Link}
+            sx={{
+              display: { xs: "none", sm: "flex" },
+              p: 2,
+              mx: 1,
+              color: "text.primary",
+              "&:hover": {},
+              bgcolor: "rgb(53, 212, 114)",
+            }}
+          >
+            Add Contact
+          </Button>
+        </Box>
+        <Box
+          sx={{
+            padding: 2,
+            bgcolor: "background.paper", // Uses theme-based background color
+            color: "text.primary",
+            borderRadius: "8px",
+            boxShadow: 3,
+            margin: "0 auto",
+            width: "100%",
+            m: 1,
+            p: 2,
+          }}
         >
-          Contact Management
-        </Typography>
-        {/* <DataGrid
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            align="left"
+            gutterBottom
+          >
+            Contact Management
+          </Typography>
+          {/* <DataGrid
           rows={rows}
           columns={columns}
           initialState={{
@@ -209,47 +347,80 @@ const PhoneBook = () => {
             },
           }}
         /> */}
-        <table
-          {...getTableProps()}
-          style={{ width: "100%", border: "1px solid black" }}
-        >
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th
-                    {...column.getHeaderProps()}
-                    style={{ padding: "10px", borderBottom: "1px solid black" }}
-                  >
-                    {column.render("Header")}
-                  </th>
+          <TableContainer component={Paper}>
+            <Table {...getTableProps()} style={{ width: "100%" }}>
+              <TableHead>
+                {headerGroups.map((headerGroup, idx) => (
+                  <TableRow key={idx} {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column, idx) => (
+                      <StyledTableCell
+                        key={idx}
+                        {...column.getHeaderProps()}
+                        style={{
+                          padding: "10px",
+                          borderBottom: "1px solid black",
+                        }}
+                      >
+                        {column.render("Header")}
+                      </StyledTableCell>
+                    ))}
+                  </TableRow>
                 ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => (
-                    <td
-                      {...cell.getCellProps()}
-                      style={{
-                        padding: "10px",
-                        borderBottom: "1px solid black",
-                      }}
-                    >
-                      {cell.render("Cell")}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              </TableHead>
+              <TableBody {...getTableBodyProps()}>
+                {rows.map((row, idx) => {
+                  prepareRow(row);
+                  return (
+                    <StyledTableRow {...row.getRowProps()} key={idx}>
+                      {row.cells.map((cell, idx) => (
+                        <TableCell
+                          key={idx}
+                          {...cell.getCellProps()}
+                          style={{
+                            padding: "10px",
+                            borderBottom: "1px solid black",
+                          }}
+                        >
+                          {cell.render("Cell")}
+                        </TableCell>
+                      ))}
+                    </StyledTableRow>
+                  );
+                })}
+              </TableBody>
+              {/*  */}
+              <TableFooter>
+                <TableRow>
+                  <TablePagination
+                    rowsPerPageOptions={[
+                      5,
+                      10,
+                      25,
+                      { label: "All", value: -1 },
+                    ]}
+                    colSpan={3}
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    slotProps={{
+                      select: {
+                        inputProps: {
+                          "aria-label": "rows per page",
+                        },
+                        native: true,
+                      },
+                    }}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                    ActionsComponent={TablePaginationActions}
+                  />
+                </TableRow>
+              </TableFooter>
+            </Table>
+          </TableContainer>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 export default PhoneBook;
