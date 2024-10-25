@@ -1,7 +1,7 @@
 import { apiClient } from "../axios"
 export const getUserList = async (token) => {
     try {
-        const response = await apiClient.get("/users/list?page=1&limit=20", {
+        const response = await apiClient.get("/user/?page=1&limit=20", {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',

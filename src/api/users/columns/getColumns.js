@@ -1,7 +1,7 @@
 import { apiClient } from "../../axios"
 export const userColumns = async (token) => {
     try {
-        const response = await apiClient.get("/schema", {
+        const response = await apiClient.get("/user/schema", {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',

@@ -161,67 +161,13 @@ const PhoneBook = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [loader, setLoader] = useState(false);
-  // const columns = [
-  //   { field: "customerId", headerName: "Customer ID", width: 250 },
-  //   {
-  //     field: "name",
-  //     headerName: "Name",
-  //     width: 250,
-  //     editable: true,
-  //   },
-  //   {
-  //     field: "customerNumber",
-  //     headerName: "Customer No.",
-  //     width: 250,
-  //     editable: true,
-  //   },
-  //   {
-  //     field: "createdAt",
-  //     headerName: "Created At?",
-  //     // type: "number",
-  //     width: 250,
-  //     editable: true,
-  //   },
-  //   {
-  //     field: "assignedTo",
-  //     headerName: "Assigned To",
-  //     description: "This column has a value getter and is not sortable.",
-  //     sortable: false,
-  //     width: 250,
-  //     renderCell: (params) => {
-  //       const [value, setValue] = useState(params.value);
 
-  //       return (
-  //         <div style={{ display: "flex", alignItems: "center" }}>
-  //           <span>{value}</span>
-  //           <span style={{ margin: "0px 10px", fontSize: "1.5rem" }}>|</span>
-  //           <IconButton
-  //             size="small"
-  //             onClick={handleAssignOpen}
-  //             style={{ marginLeft: 8 }}
-  //           >
-  //             <EditIcon />
-  //           </IconButton>
-  //         </div>
-  //       );
-  //     },
-  //   },
-  // ];
   const handleAddContact = async (userData) => {
     const token = localStorage.getItem("token");
     const { data, error } = await createUser(token, userData);
     console.log(data, error.message);
   };
-  // const rows = [
-  //   {
-  //     id: 0,
-  //     customerId: "1",
-  //     name: "Parth Banker",
-  //     customerNumber: "918469725997",
-  //     createdAt: "2024-02-08 20:47:59",
-  //     assignedTo: "Test User ",
-  //   },
-  // ];
+
   const tableColumns = useMemo(() => columns, [columns]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
@@ -229,20 +175,20 @@ const PhoneBook = () => {
       data: tableData,
     });
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const decoded = jwtDecode(token);
-    console.log(decoded, rows);
-  }, []);
+    console.log(tableData, "tableData");
+  }, [tableData]);
+  // get userList and schema
   useEffect(() => {
     const token = localStorage.getItem("token");
     const getColumns = async () => {
       setLoader(true);
       const { data, error } = await userColumns(token);
-      const schemaData = data?.schema || {};
+      const schemaData = data?.fields || {};
       if (error) {
         // Handle error (e.g., show a message to the user)
         console.error("Failed to fetch columns:", error);
       } else {
+        console.log(schemaData,"schemaData")
         setSchema(schemaData); // Store schema in state
         setColumns(generateColumnsFromSchema(schemaData)); // Generate columns based on schema
       }
@@ -266,22 +212,10 @@ const PhoneBook = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  // need to add no-data condition
   return (
     <>
       {loader ? <Loader /> : <></>}
       <Box sx={{}}>
-        <AddModal
-          open={open}
-          handleClose={handleClose}
-          handleAddContact={handleAddContact}
-        />
-        <AddSchema isSchemaModel={isSchemaModel} handlSchemaAddClose={handlSchemaAddClose} />
-        <AssignModal
-          isAssignOpen={isAssignOpen}
-          handleAssignClose={handleAssignClose}
-        />
-
         <Box
           sx={{
             padding: 2,
@@ -351,28 +285,7 @@ const PhoneBook = () => {
           >
             Contact Management
           </Typography>
-          {/* <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5,
-              },
-            },
-          }}
-          pageSizeOptions={[5]}
-          disableRowSelectionOnClick
-          disableColumnFilter
-          disableColumnSelector
-          disableDensitySelector
-          slots={{ toolbar: GridToolbar }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-            },
-          }}
-        /> */}
+
           <TableContainer component={Paper}>
             <Table {...getTableProps()} style={{ width: "100%" }}>
               <TableHead>
@@ -394,25 +307,33 @@ const PhoneBook = () => {
                 ))}
               </TableHead>
               <TableBody {...getTableBodyProps()}>
-                {rows.map((row, idx) => {
-                  prepareRow(row);
-                  return (
-                    <StyledTableRow {...row.getRowProps()} key={idx}>
-                      {row.cells.map((cell, idx) => (
-                        <TableCell
-                          key={idx}
-                          {...cell.getCellProps()}
-                          style={{
-                            padding: "10px",
-                            borderBottom: "1px solid black",
-                          }}
-                        >
-                          {cell.render("Cell")}
-                        </TableCell>
-                      ))}
-                    </StyledTableRow>
-                  );
-                })}
+                {rows.length > 0 ? (
+                  rows.map((row, idx) => {
+                    prepareRow(row);
+                    return (
+                      <StyledTableRow {...row.getRowProps()} key={idx}>
+                        {row.cells.map((cell, idx) => (
+                          <TableCell
+                            key={idx}
+                            {...cell.getCellProps()}
+                            style={{
+                              padding: "10px",
+                              borderBottom: "1px solid black",
+                            }}
+                          >
+                            {cell.render("Cell")}
+                          </TableCell>
+                        ))}
+                      </StyledTableRow>
+                    );
+                  })
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={1} style={{ textAlign: "center" }}>
+                      No data available
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
               {/*  */}
               <TableFooter>
@@ -446,6 +367,20 @@ const PhoneBook = () => {
           </TableContainer>
         </Box>
       </Box>
+      <AddModal
+        open={open}
+        handleClose={handleClose}
+        handleAddContact={handleAddContact}
+      />
+      <AddSchema
+        isSchemaModel={isSchemaModel}
+        handlSchemaAddClose={handlSchemaAddClose}
+        setIsSchemaModel={setIsSchemaModel}
+      />
+      <AssignModal
+        isAssignOpen={isAssignOpen}
+        handleAssignClose={handleAssignClose}
+      />
     </>
   );
 };
