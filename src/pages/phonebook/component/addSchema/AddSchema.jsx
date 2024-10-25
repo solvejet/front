@@ -22,19 +22,18 @@ const style = {
   width: 400,
   bgcolor: "background.paper",
   boxShadow: 24,
-  p: 4,
 };
 const styles = {
   container: {
     maxWidth: "500px",
-    margin: "20px auto",
-    padding: "20px",
+    margin: "10px auto",
+    padding: "10px",
     fontFamily: "Arial, sans-serif",
     boxShadow: "0 0 10px rgba(0,0,0,0.1)",
     borderRadius: "8px",
   },
   formGroup: {
-    marginBottom: "20px",
+    marginBottom: "10px",
   },
   label: {
     display: "block",
@@ -90,63 +89,35 @@ const AddSchema = ({
   handlSchemaAddClose,
   setIsSchemaModel,
 }) => {
-  const [fields, setFields] = useState([]);
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedStringType, setSelectedStringType] = useState("");
   const [heading, setHeading] = useState("");
-  // const [listItems, setListItems] = useState([""]); // Array of strings
-  const [currentField, setCurrentField] = useState({
-    name: "",
-    type: "",
-    options: {},
-  });
   const [type, setType] = useState("");
-  const [format, setFormat] = useState("");
   // const [heading, setHeading] = useState('');
   const [value, setValue] = useState("");
   const [listItems, setListItems] = useState([""]);
   const [error, setError] = useState("");
+  // from API
   const [supportedTypes, setSupportedTypes] = useState(null);
-  const handleAddField = () => {
-    setFields([...fields, { ...currentField }]);
-    setCurrentField({
-      name: "",
-      type: "",
-      options: {},
-    });
-  };
+  const [supportedOptions, setSupportedoptions] = useState([
+    {
+      label: "Text",
+      type: "string",
+    },
+    {
+      label: "List",
+      type: "string",
+    },
+    {
+      label: "Number",
+      type: "number",
+    },
+    // {
+    //   label: "Date",
+    //   type: "date",
+    // },
+  ]);
 
-  const handleOptionChange = (option, value) => {
-    setCurrentField((prev) => ({
-      ...prev,
-      options: { ...prev.options, [option]: value },
-    }));
-  };
-
-  const handleTypeChange = (e) => {
-    setSelectedType(e.target.value);
-    setSelectedStringType(""); // Reset the string type dropdown if type changes
-  };
-  const handleStringTypeChange = (e) => {
-    setSelectedStringType(e.target.value);
-  };
-  // const addListItem = () => {
-  //   setListItems([...listItems, { heading: "", value: "" }]);
-  // };
-  const handleEnumOptions = (e) => {
-    const options = e.target.value.split(",");
-    setCurrentField((prev) => ({
-      ...prev,
-      options: { ...prev.options, enum: options },
-    }));
-  };
-  const handleListItemChange = (index, field, value) => {
-    const updatedListItems = [...listItems];
-    updatedListItems[index][field] = value;
-    setListItems(updatedListItems);
-  };
   const validateForm = () => {
-    if (type === "string" && format === "list") {
+    if (type === "List") {
       if (!heading.trim()) {
         setError("List heading is required");
         return false;
@@ -169,21 +140,26 @@ const AddSchema = ({
     e.preventDefault();
     if (!validateForm()) return;
 
-    if (type === "string" && format === "list") {
+    if (type === "List") {
       console.log({
         type: type,
-        format: format,
         listHeading: heading,
         listItems: listItems,
       });
     } else {
       console.log({
         type: type,
-        format: format || "single",
+
         heading: heading,
         value: value,
       });
     }
+    setIsSchemaModel(false);
+    setType("");
+    setHeading("");
+    setValue("");
+    setListItems([""]);
+    return;
   };
 
   const addListItem = () => {
@@ -213,11 +189,13 @@ const AddSchema = ({
     data();
   }, []);
   // unMounting
-  useEffect(()=>{
-return ()=>{
-
-}
-  },[])
+  useEffect(() => {
+    return () => {
+      setHeading(null);
+      setValue(null);
+      setListItems(null);
+    };
+  }, []);
   return (
     <Modal
       open={isSchemaModel}
@@ -230,6 +208,7 @@ return ()=>{
           sx={{
             flexDirection: "row-reverse",
             cursor: "pointer",
+            padding:"10px"
           }}
           onClick={() => {
             setIsSchemaModel(false);
@@ -242,34 +221,41 @@ return ()=>{
         </Typography>
 
         <Stack>
-          {supportedTypes && Object.keys(supportedTypes).length > 0 ? (
+          {supportedOptions.length > 0 ? (
             <Box>
               <div style={styles.container}>
                 <form onSubmit={handleSubmit}>
-                  <div style={styles.formGroup}>
+                  <div
+                    style={{
+                      ...styles.container,
+                      maxHeight: "400px",
+                      overflowY: "auto",
+                    }}
+                  >
                     <label style={styles.label}>Select Type:</label>
                     <select
                       style={styles.select}
                       value={type}
                       onChange={(e) => {
+                        // console.log(e.target,"value",e.target.value);
                         setType(e.target.value);
-                        setFormat("");
-                        setHeading("");
-                        setValue("");
-                        setListItems([""]);
-                        setError("");
+                        // setFormat("");
+                        // setHeading("");
+                        // setValue("");
+                        // setListItems([""]);
+                        // setError("");
                       }}
                     >
                       <option value="">Select Type</option>
-                      {Object.keys(supportedTypes).map((item, idx) => (
-                        <option key={idx} value={item}>
-                          {item}
+                      {supportedOptions.map((item, idx) => (
+                        <option key={idx} value={item.label} name={item.type}>
+                          {item?.label}
                         </option>
                       ))}
                     </select>
 
                     {/* If "string" is selected, show the second dropdown */}
-                    {type === "string" && (
+                    {/* {type === "Text" && (
                       <div style={styles.formGroup}>
                         <label style={styles.label}>Select Format:</label>
                         <select
@@ -288,9 +274,9 @@ return ()=>{
                           <option value="text">Text</option>
                         </select>
                       </div>
-                    )}
+                    )} */}
 
-                    {type === "string" && format === "list" && (
+                    {type === "List" && (
                       <div style={styles.formGroup}>
                         <div style={styles.formGroup}>
                           <label style={styles.label}>List Heading:</label>
@@ -303,43 +289,44 @@ return ()=>{
                           />
                         </div>
                         <label style={styles.label}>List Items:</label>
-                        {listItems.map((item, index) => (
-                          <div key={index} style={styles.listItemContainer}>
-                            <input
-                              style={styles.input}
-                              type="text"
-                              value={item}
-                              onChange={(e) =>
-                                updateListItem(index, e.target.value)
-                              }
-                              placeholder={`Item ${index + 1}`}
-                            />
-                            {listItems.length > 1 && (
-                              <button
-                                type="button"
-                                onClick={() => removeListItem(index)}
-                                style={{
-                                  ...styles.button,
-                                  ...styles.removeButton,
-                                }}
-                              >
-                                Remove
-                              </button>
-                            )}
-                          </div>
-                        ))}
+                        {listItems &&
+                          listItems.length > 0 &&
+                          listItems.map((item, index) => (
+                            <div key={index} style={styles.listItemContainer}>
+                              <input
+                                style={styles.input}
+                                type="text"
+                                value={item}
+                                onChange={(e) =>
+                                  updateListItem(index, e.target.value)
+                                }
+                                placeholder={`Item ${index + 1}`}
+                              />
+                              {listItems.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => removeListItem(index)}
+                                  style={{
+                                    ...styles.button,
+                                    ...styles.removeButton,
+                                  }}
+                                >
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+                          ))}
                         <button
                           type="button"
                           onClick={addListItem}
                           style={{ ...styles.button, ...styles.addButton }}
                         >
-                          Add Item
+                          Add Items
                         </button>
                       </div>
                     )}
 
-                    {((type === "string" && format === "text") ||
-                      type === "number") && (
+                    {(type === "Text" || type === "Number") && (
                       <div style={styles.formGroup}>
                         <div style={styles.formGroup}>
                           <label style={styles.label}>Heading:</label>
@@ -355,7 +342,7 @@ return ()=>{
                           <label style={styles.label}>Value:</label>
                           <input
                             style={styles.input}
-                            type={type === "number" ? "number" : "text"}
+                            type={type === "Number" ? "number" : "text"}
                             value={value}
                             onChange={(e) => setValue(e.target.value)}
                             placeholder="Enter value"
@@ -367,7 +354,9 @@ return ()=>{
                     {error && <div style={styles.error}>{error}</div>}
 
                     {type &&
-                      ((type === "string" && format) || type === "number") && (
+                      (type === "Text" ||
+                        type === "Number" ||
+                        type === "List") && (
                         <button type="submit" style={styles.button}>
                           Submit
                         </button>

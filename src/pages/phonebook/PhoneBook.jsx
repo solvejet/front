@@ -199,8 +199,12 @@ const PhoneBook = () => {
       data: tableData,
     });
   useEffect(() => {
-    // console.log(tableData, "tableData");
-  }, [tableData]);
+    console.log(tableData, "tableData");
+    console.log(tableColumns, "tableColumns");
+    console.log(rows, "rows");
+    console.log(headerGroups, "headerGroups");
+    console.log(getTableBodyProps, "getTableBodyProps");
+  }, [tableData, tableColumns]);
   // get userList and schema
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -236,6 +240,7 @@ const PhoneBook = () => {
     <>
       {loader ? <Loader /> : <></>}
       <Box sx={{}}>
+        {/* add contact N add schema Box*/}
         <Box
           sx={{
             padding: 2,
@@ -244,7 +249,6 @@ const PhoneBook = () => {
             borderRadius: "8px",
             boxShadow: 3,
             margin: "0 auto",
-            width: "100%",
             m: 1,
             display: "flex",
             flexDirection: "row-reverse",
@@ -283,6 +287,7 @@ const PhoneBook = () => {
             Add Schema
           </Button>
         </Box>
+        {/* table box */}
         <Box
           sx={{
             padding: 2,
@@ -291,7 +296,6 @@ const PhoneBook = () => {
             borderRadius: "8px",
             boxShadow: 3,
             margin: "0 auto",
-            width: "100%",
             m: 1,
             p: 2,
           }}
@@ -348,10 +352,7 @@ const PhoneBook = () => {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell
-                      colSpan={headerGroups[0].headers.length}
-                      style={{ textAlign: "center" }}
-                    >
+                    <TableCell colSpan={0} style={{ textAlign: "center" }}>
                       No data available
                     </TableCell>
                   </TableRow>
@@ -389,6 +390,7 @@ const PhoneBook = () => {
           </TableContainer>
         </Box>
       </Box>
+      {/* models */}
       <AddModal
         open={open}
         handleClose={handleClose}
