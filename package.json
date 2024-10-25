@@ -29,6 +29,7 @@
     "reactflow": "^11.11.4",
     "recharts": "^2.12.7",
     "redux": "^5.0.1",
+    "sweetalert2": "^11.14.4",
     "yup": "^1.4.0"
   },
   "devDependencies": {

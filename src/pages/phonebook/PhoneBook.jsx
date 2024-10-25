@@ -37,6 +37,7 @@ import LastPageIcon from "@mui/icons-material/LastPage";
 import Loader from "../../components/loader/Loader";
 import { createUser } from "../../api/users/createUser";
 import AddSchema from "./component/addSchema/AddSchema";
+import Swal from "sweetalert2";
 
 const generateColumnsFromSchema = (schema) => {
   return Object.keys(schema).map((key) => ({
@@ -161,11 +162,34 @@ const PhoneBook = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [loader, setLoader] = useState(false);
-
+  const userList = async (token) => {
+    const response = await getUserList(token);
+    // console.log(response);
+    setTableData(response?.users || []);
+  };
   const handleAddContact = async (userData) => {
     const token = localStorage.getItem("token");
     const { data, error } = await createUser(token, userData);
-    console.log(data, error.message);
+    console.log(data, error);
+    if (error) {
+      const errorMessage =
+        error?.response?.data?.error?.message || error?.message;
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: errorMessage,
+        // footer: '<a href="#">Why do I have this issue?</a>',
+      });
+    } else {
+      console.log(data);
+      Swal.fire({
+        icon: "success",
+        title: "User Added Successfully",
+        // footer: '<a href="#">Why do I have this issue?</a>',
+      });
+      const token = localStorage.getItem("token");
+      userList(token);
+    }
   };
 
   const tableColumns = useMemo(() => columns, [columns]);
@@ -175,7 +199,7 @@ const PhoneBook = () => {
       data: tableData,
     });
   useEffect(() => {
-    console.log(tableData, "tableData");
+    // console.log(tableData, "tableData");
   }, [tableData]);
   // get userList and schema
   useEffect(() => {
@@ -188,7 +212,7 @@ const PhoneBook = () => {
         // Handle error (e.g., show a message to the user)
         console.error("Failed to fetch columns:", error);
       } else {
-        console.log(schemaData,"schemaData")
+        console.log(schemaData, "schemaData");
         setSchema(schemaData); // Store schema in state
         setColumns(generateColumnsFromSchema(schemaData)); // Generate columns based on schema
       }
@@ -196,13 +220,9 @@ const PhoneBook = () => {
       setColumns(generateColumnsFromSchema(schemaData)); // Generate columns based on schema
       setLoader(false);
     };
-    const userList = async () => {
-      const response = await getUserList(token);
-      console.log(response);
-      setTableData(response?.users || []);
-    };
+
     getColumns();
-    userList();
+    userList(token);
   }, []);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -266,7 +286,7 @@ const PhoneBook = () => {
         <Box
           sx={{
             padding: 2,
-            bgcolor: "background.paper", // Uses theme-based background color
+            bgcolor: "background.paper",
             color: "text.primary",
             borderRadius: "8px",
             boxShadow: 3,
@@ -285,9 +305,8 @@ const PhoneBook = () => {
           >
             Contact Management
           </Typography>
-
-          <TableContainer component={Paper}>
-            <Table {...getTableProps()} style={{ width: "100%" }}>
+          <TableContainer component={Paper} sx={{ maxHeight: 340 }}>
+            <Table {...getTableProps()} stickyHeader>
               <TableHead>
                 {headerGroups.map((headerGroup, idx) => (
                   <TableRow key={idx} {...headerGroup.getHeaderGroupProps()}>
@@ -329,14 +348,17 @@ const PhoneBook = () => {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={1} style={{ textAlign: "center" }}>
+                    <TableCell
+                      colSpan={headerGroups[0].headers.length}
+                      style={{ textAlign: "center" }}
+                    >
                       No data available
                     </TableCell>
                   </TableRow>
                 )}
               </TableBody>
-              {/*  */}
-              <TableFooter>
+              {/* Pagination controls */}
+              {/* <TableFooter>
                 <TableRow>
                   <TablePagination
                     rowsPerPageOptions={[
@@ -345,7 +367,7 @@ const PhoneBook = () => {
                       25,
                       { label: "All", value: -1 },
                     ]}
-                    colSpan={3}
+                    colSpan={headerGroups[0].headers.length}
                     count={rows.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
@@ -362,7 +384,7 @@ const PhoneBook = () => {
                     ActionsComponent={TablePaginationActions}
                   />
                 </TableRow>
-              </TableFooter>
+              </TableFooter> */}
             </Table>
           </TableContainer>
         </Box>
@@ -401,8 +423,8 @@ const AddModal = ({ open, handleClose, handleAddContact }) => {
   const [addContact, setAddContact] = useState({
     name: "",
     number: "",
-    group: "",
-    adminId: null,
+    // group: "",
+    // assignedAdmin: null,
   });
   const [errors, setErrors] = useState({});
   const token = localStorage.getItem("token");
@@ -415,7 +437,7 @@ const AddModal = ({ open, handleClose, handleAddContact }) => {
     const newErrors = {};
     if (!addContact.name) newErrors.name = "Name is required";
     if (!addContact.number) newErrors.number = "Phone Number is required";
-    if (!addContact.group) newErrors.group = "Group is required";
+    // if (!addContact.group) newErrors.group = "Group is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -427,7 +449,7 @@ const AddModal = ({ open, handleClose, handleAddContact }) => {
     }
     setAddContact({
       ...addContact,
-      adminId: id,
+      // assignedAdmin: id,
       [e.target.name]: e.target.value,
     });
     // Clear error for the field being edited
@@ -442,8 +464,8 @@ const AddModal = ({ open, handleClose, handleAddContact }) => {
       setAddContact({
         name: "",
         number: "",
-        group: "",
-        adminId: null,
+        // group: "",
+        // assignedAdmin: null,
       });
       handleClose();
     }
@@ -488,7 +510,7 @@ const AddModal = ({ open, handleClose, handleAddContact }) => {
             type="number" // Set the input type to number
             InputProps={{ inputProps: { min: 0 } }}
           />
-          <FormControl fullWidth margin="normal" error={!!errors.group}>
+          {/* <FormControl fullWidth margin="normal" error={!!errors.group}>
             <InputLabel id="group-select-label">Group</InputLabel>
             <Select
               labelId="group-select-label"
@@ -505,7 +527,7 @@ const AddModal = ({ open, handleClose, handleAddContact }) => {
             {errors.group && (
               <Typography color="error">{errors.group}</Typography>
             )}
-          </FormControl>
+          </FormControl> */}
 
           <Box display="flex" justifyContent="space-between" mt={3}>
             <Button variant="contained" color="primary" onClick={handleSubmit}>
