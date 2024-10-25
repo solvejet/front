@@ -95,6 +95,7 @@ const AddSchema = ({
   const [value, setValue] = useState("");
   const [listItems, setListItems] = useState([""]);
   const [error, setError] = useState("");
+  const [isRequired, setIsRequired] = useState(false);
   // from API
   const [supportedTypes, setSupportedTypes] = useState(null);
   const [supportedOptions, setSupportedoptions] = useState([
@@ -145,13 +146,14 @@ const AddSchema = ({
         type: type,
         listHeading: heading,
         listItems: listItems,
+        required:isRequired
       });
     } else {
       console.log({
         type: type,
-
         heading: heading,
         value: value,
+        required:isRequired
       });
     }
     setIsSchemaModel(false);
@@ -159,6 +161,7 @@ const AddSchema = ({
     setHeading("");
     setValue("");
     setListItems([""]);
+    setIsRequired(false)
     return;
   };
 
@@ -208,7 +211,7 @@ const AddSchema = ({
           sx={{
             flexDirection: "row-reverse",
             cursor: "pointer",
-            padding:"10px"
+            padding: "10px",
           }}
           onClick={() => {
             setIsSchemaModel(false);
@@ -253,7 +256,21 @@ const AddSchema = ({
                         </option>
                       ))}
                     </select>
-
+                    <div style={{}}>
+                      {type && (
+                        <div style={{}}>
+                          <label style={styles.label}>
+                            <input
+                              style={{ margin: "10px" }}
+                              type="checkbox"
+                              checked={isRequired}
+                              onChange={(e) => setIsRequired(e.target.checked)}
+                            />
+                            Is required
+                          </label>
+                        </div>
+                      )}
+                    </div>
                     {/* If "string" is selected, show the second dropdown */}
                     {/* {type === "Text" && (
                       <div style={styles.formGroup}>

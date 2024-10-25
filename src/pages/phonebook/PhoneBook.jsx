@@ -38,7 +38,18 @@ import Loader from "../../components/loader/Loader";
 import { createUser } from "../../api/users/createUser";
 import AddSchema from "./component/addSchema/AddSchema";
 import Swal from "sweetalert2";
-
+import AddModal from "./component/addUser/AddUser";
+import AssignModal from "./component/assignUser/AssignUser";
+export const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+};
 const generateColumnsFromSchema = (schema) => {
   return Object.keys(schema).map((key) => ({
     Header: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize the header
@@ -158,7 +169,7 @@ const PhoneBook = () => {
   const handleAssignClose = () => setIsAssignOpen(false);
   const [columns, setColumns] = useState([]); // State for table columns
   const [tableData, setTableData] = useState([]);
-  const [schema, setSchema] = useState({}); // State for the schema object
+  const [inputFields, setInputFields] = useState(); // State for the schema object
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [loader, setLoader] = useState(false);
@@ -174,6 +185,7 @@ const PhoneBook = () => {
     if (error) {
       const errorMessage =
         error?.response?.data?.error?.message || error?.message;
+
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -187,11 +199,28 @@ const PhoneBook = () => {
         title: "User Added Successfully",
         // footer: '<a href="#">Why do I have this issue?</a>',
       });
-      const token = localStorage.getItem("token");
       userList(token);
     }
   };
+  /*
+dummy data
+  const data = React.useMemo(
+    () => [
+      { col1: "Hello", col2: "World" },
+      { col1: "React", col2: "Table" },
+    ],
+    []
+  );
 
+  const columns = React.useMemo(
+    () => [
+      { Header: "Column 1", accessor: "col1" }, // accessor is the "key" in the data
+      { Header: "Column 2", accessor: "col2" },
+    ],
+    []
+  );
+
+*/
   const tableColumns = useMemo(() => columns, [columns]);
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
@@ -205,23 +234,23 @@ const PhoneBook = () => {
     console.log(headerGroups, "headerGroups");
     console.log(getTableBodyProps, "getTableBodyProps");
   }, [tableData, tableColumns]);
+
   // get userList and schema
   useEffect(() => {
     const token = localStorage.getItem("token");
     const getColumns = async () => {
       setLoader(true);
       const { data, error } = await userColumns(token);
-      const schemaData = data?.fields || {};
+      const fields = data?.fields || {};
       if (error) {
         // Handle error (e.g., show a message to the user)
         console.error("Failed to fetch columns:", error);
       } else {
-        console.log(schemaData, "schemaData");
-        setSchema(schemaData); // Store schema in state
-        setColumns(generateColumnsFromSchema(schemaData)); // Generate columns based on schema
+        // console.log(schemaData, "schemaData");
+        setInputFields(fields);
+        setColumns(generateColumnsFromSchema(fields)); // Generate columns based on schema
       }
-      setSchema(schemaData); // Store schema in state
-      setColumns(generateColumnsFromSchema(schemaData)); // Generate columns based on schema
+
       setLoader(false);
     };
 
@@ -395,6 +424,7 @@ const PhoneBook = () => {
         open={open}
         handleClose={handleClose}
         handleAddContact={handleAddContact}
+        fields={inputFields}
       />
       <AddSchema
         isSchemaModel={isSchemaModel}
@@ -409,199 +439,3 @@ const PhoneBook = () => {
   );
 };
 export default PhoneBook;
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
-
-const AddModal = ({ open, handleClose, handleAddContact }) => {
-  const [addContact, setAddContact] = useState({
-    name: "",
-    number: "",
-    // group: "",
-    // assignedAdmin: null,
-  });
-  const [errors, setErrors] = useState({});
-  const token = localStorage.getItem("token");
-  if (!token) return;
-  const decoded = jwtDecode(token);
-  const id = decoded?.id; // Using optional chainin
-  if (!id) return;
-  // setAddContact({ ...addContact, adminId: id });
-  const validateForm = () => {
-    const newErrors = {};
-    if (!addContact.name) newErrors.name = "Name is required";
-    if (!addContact.number) newErrors.number = "Phone Number is required";
-    // if (!addContact.group) newErrors.group = "Group is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "number" && Number(value) < 0) {
-      return; // Do not update the state for negative numbers
-    }
-    setAddContact({
-      ...addContact,
-      // assignedAdmin: id,
-      [e.target.name]: e.target.value,
-    });
-    // Clear error for the field being edited
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-  };
-
-  const handleSubmit = () => {
-    if (validateForm()) {
-      handleAddContact(addContact);
-
-      // Reset the form state after submission
-      setAddContact({
-        name: "",
-        number: "",
-        // group: "",
-        // assignedAdmin: null,
-      });
-      handleClose();
-    }
-  };
-
-  return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="add-contact-modal"
-    >
-      <Box sx={style}>
-        <Typography variant="h6" align="center" gutterBottom>
-          Add Contact
-        </Typography>
-        <Typography align="center" variant="body2" gutterBottom>
-          Add a new customer contact
-        </Typography>
-
-        <Box component="form" noValidate autoComplete="off">
-          <TextField
-            fullWidth
-            label="Name"
-            name="name"
-            value={addContact.name}
-            onChange={handleChange}
-            error={!!errors.name}
-            helperText={errors.name}
-            margin="normal"
-            variant="outlined"
-          />
-          <TextField
-            fullWidth
-            label="Phone Number"
-            name="number"
-            value={addContact.number}
-            onChange={handleChange}
-            error={!!errors.number}
-            helperText={errors.number}
-            margin="normal"
-            variant="outlined"
-            type="number" // Set the input type to number
-            InputProps={{ inputProps: { min: 0 } }}
-          />
-          {/* <FormControl fullWidth margin="normal" error={!!errors.group}>
-            <InputLabel id="group-select-label">Group</InputLabel>
-            <Select
-              labelId="group-select-label"
-              id="group-select"
-              name="group"
-              value={addContact.group}
-              onChange={handleChange}
-              label="Group"
-            >
-              <MenuItem value={"Group 1"}>Group 1</MenuItem>
-              <MenuItem value={"Group 2"}>Group 2</MenuItem>
-              <MenuItem value={"Group 3"}>Group 3</MenuItem>
-            </Select>
-            {errors.group && (
-              <Typography color="error">{errors.group}</Typography>
-            )}
-          </FormControl> */}
-
-          <Box display="flex" justifyContent="space-between" mt={3}>
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
-              Submit
-            </Button>
-            <Button variant="outlined" color="secondary" onClick={handleClose}>
-              Cancel
-            </Button>
-          </Box>
-        </Box>
-      </Box>
-    </Modal>
-  );
-};
-function AssignModal({ isAssignOpen, handleAssignClose }) {
-  return (
-    <Box>
-      <Modal
-        open={isAssignOpen}
-        onClose={handleAssignClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            align="center"
-            gutterBottom
-          >
-            Assign Contact
-          </Typography>
-          <Typography
-            id="modal-modal-description"
-            align="center"
-            variant="body2"
-            gutterBottom
-          >
-            Assign a contact to a staff member
-          </Typography>
-
-          <Box component="form" noValidate autoComplete="off">
-            {/* Name Field */}
-
-            {/* Group Select Field */}
-            <FormControl fullWidth margin="normal">
-              <InputLabel id="group-select-label">Staff</InputLabel>
-              <Select
-                labelId="group-select-label"
-                id="group-select"
-                label="Group"
-              >
-                <MenuItem value={10}>Staff 1</MenuItem>
-                <MenuItem value={20}>Staff 2</MenuItem>
-                <MenuItem value={30}>Staff 3</MenuItem>
-              </Select>
-            </FormControl>
-
-            {/* Buttons */}
-            <Box display="flex" justifyContent="space-between" mt={3}>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ width: "100%" }}
-              >
-                Assign
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-      </Modal>
-    </Box>
-  );
-}
