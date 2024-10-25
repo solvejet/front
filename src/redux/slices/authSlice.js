@@ -1,13 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { config } from '../../config/config';
 
-const API_URL = 'http://localhost:5000/api';
 
 export const loginUser = createAsyncThunk(
   'admin/login',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/admin/login`, userData);
+      const response = await axios.post(`${config?.baseURL}/admin/login`, userData);
       console.log(response, "response")
       // Store the JWT token in localStorage
       localStorage.setItem('token', response.data.token);
