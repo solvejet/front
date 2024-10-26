@@ -358,29 +358,39 @@ dummy data
             p: 2,
           }}
         >
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            align="left"
-            gutterBottom
-           
+          <Stack
+            spacing={2}
+            direction="row"
+            sx={{ m: 1 }}
+            justifyContent="space-between"
+            alignItems="center"
           >
-            Contact Management
-          </Typography>
-          <Stack spacing={2} direction="row-reverse" sx={{ m: 1 }}>
-            <TextField
-              label="Search"
-              variant="outlined"
-              size="small"
-              value={searchInput}
-              onChange={handleSearchChange}
-              sx={{ width: 200 }}
-            />
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              align="left"
+              gutterBottom
+            >
+              Contact Management
+            </Typography>
+            <Stack spacing={2} direction="row-reverse" sx={{ m: 1 }}>
+              <TextField
+                label="Search"
+                variant="outlined"
+                size="small"
+                value={searchInput}
+                onChange={handleSearchChange}
+                sx={{ width: 200 }}
+              />
+            </Stack>
           </Stack>
 
-          <TableContainer component={Paper} sx={{ maxHeight: 340 }}>
-            <Table {...getTableProps()} stickyHeader>
+          <TableContainer
+            component={Paper}
+            sx={{ maxHeight: 340, overflowX: "auto" }}
+          >
+            <Table {...getTableProps()} stickyHeader sx={{ minWidth: 800 }}>
               <TableHead>
                 {headerGroups.map((headerGroup, idx) => (
                   <TableRow key={idx} {...headerGroup.getHeaderGroupProps()}>
@@ -389,8 +399,9 @@ dummy data
                         key={idx}
                         {...column.getHeaderProps()}
                         style={{
-                          padding: "10px",
-                          borderBottom: "1px solid black",
+                          width: 150, // Fixed column width
+                          whiteSpace: "nowrap",
+                          fontSize: "1rem", // Increase font size
                         }}
                       >
                         {column.render("Header")}
@@ -401,25 +412,27 @@ dummy data
               </TableHead>
               <TableBody {...getTableBodyProps()}>
                 {rows.length > 0 ? (
-                  rows.map((row, idx) => {
-                    prepareRow(row);
-                    return (
-                      <StyledTableRow {...row.getRowProps()} key={idx}>
-                        {row.cells.map((cell, idx) => (
-                          <TableCell
-                            key={idx}
-                            {...cell.getCellProps()}
-                            style={{
-                              padding: "10px",
-                              borderBottom: "1px solid black",
-                            }}
-                          >
-                            {cell.render("Cell")}
-                          </TableCell>
-                        ))}
-                      </StyledTableRow>
-                    );
-                  })
+                  rows
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, idx) => {
+                      prepareRow(row);
+                      return (
+                        <StyledTableRow {...row.getRowProps()} key={idx}>
+                          {row.cells.map((cell, idx) => (
+                            <TableCell
+                              key={idx}
+                              {...cell.getCellProps()}
+                              style={{
+                                padding: "10px",
+                                borderBottom: "1px solid black",
+                              }}
+                            >
+                              {cell.render("Cell")}
+                            </TableCell>
+                          ))}
+                        </StyledTableRow>
+                      );
+                    })
                 ) : (
                   <TableRow>
                     <TableCell colSpan={0} style={{ textAlign: "center" }}>
@@ -428,34 +441,25 @@ dummy data
                   </TableRow>
                 )}
               </TableBody>
+
               {/* Pagination controls */}
-              {/* <TableFooter>
-                <TableRow>
-                  <TablePagination
-                    rowsPerPageOptions={[
-                      5,
-                      10,
-                      25,
-                      { label: "All", value: -1 },
-                    ]}
-                    colSpan={headerGroups[0].headers.length}
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    slotProps={{
-                      select: {
-                        inputProps: {
-                          "aria-label": "rows per page",
-                        },
-                        native: true,
-                      },
-                    }}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    ActionsComponent={TablePaginationActions}
-                  />
-                </TableRow>
-              </TableFooter> */}
+              {tableData.length > 10 && (
+                <TableFooter >
+                  <TableRow >
+                    <TablePagination
+                      rowsPerPageOptions={[5, 10, 25]}
+                      colSpan={headerGroups[0].headers.length}
+                      count={tableData.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                      ActionsComponent={TablePaginationActions}
+                      // sx={{border:"1px solid red",alignContent:"center",alignItems:"center"}}
+                    />
+                  </TableRow>
+                </TableFooter>
+              )}
             </Table>
           </TableContainer>
         </Box>
