@@ -80,9 +80,9 @@ function App() {
               }
             />
             {/* Redirect from the root path */}
-            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/" element={<Navigate to={RouterPaths.DASHBOARD} />} />
             {/* Catch-all route for invalid paths */}
-            <Route path="*" element={<Navigate to="/login" />} />
+            <Route path="*" element={<Navigate to={RouterPaths.LOGIN} />} />
           </Routes>
           <ThemeToggleButton />
         </div>

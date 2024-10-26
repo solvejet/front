@@ -2,18 +2,19 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { config } from '../../config/config';
 
-
 export const loginUser = createAsyncThunk(
   'admin/login',
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${config?.baseURL}/admin/login`, userData);
-      console.log(response, "response")
-      // Store the JWT token in localStorage
-      localStorage.setItem('token', response.data.token);
-      return response.data;
+      console.log(response, 'response');
+      localStorage.setItem('token', response.data.token); // Store the JWT token in localStorage
+      return {
+        ...response.data,
+        message: response?.data?.message || 'Login Successful',
+      };
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return rejectWithValue({
         message: error.response?.data?.error?.message || error?.message || 'Login failed',
         status: error.response?.statusCode,
@@ -39,6 +40,8 @@ const authSlice = createSlice({
     logoutUser: (state) => {
       state.isAuthenticated = false;
       state.token = null;
+      state.success = null; // clear success message
+      state.error = null; // clear error message if any
       localStorage.removeItem('token');
     },
   },
@@ -51,7 +54,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.success = 'Login successful';
+        state.success = action.payload.message;
         state.isAuthenticated = true;
         state.token = action.payload.token;
       })
