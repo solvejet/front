@@ -444,8 +444,8 @@ dummy data
 
               {/* Pagination controls */}
               {tableData.length > 10 && (
-                <TableFooter >
-                  <TableRow >
+                <TableFooter>
+                  <TableRow>
                     <TablePagination
                       rowsPerPageOptions={[5, 10, 25]}
                       colSpan={headerGroups[0].headers.length}
@@ -475,6 +475,7 @@ dummy data
         isSchemaModel={isSchemaModel}
         handlSchemaAddClose={handlSchemaAddClose}
         setIsSchemaModel={setIsSchemaModel}
+        userList={userList}
       />
       <AssignModal
         isAssignOpen={isAssignOpen}

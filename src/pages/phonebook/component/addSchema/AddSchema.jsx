@@ -13,6 +13,9 @@ import {
   Stack,
 } from "@mui/material";
 import axios from "axios";
+import Swal from "sweetalert2";
+import { addUserSchema } from "../../../../api/users/columns/addUserSchema";
+import Loader from "../../../../components/loader/Loader";
 
 const style = {
   position: "absolute",
@@ -84,38 +87,45 @@ const styles = {
     marginTop: "5px",
   },
 };
+const options = [
+  {
+    label: "Text",
+    type: "string",
+  },
+  {
+    label: "List",
+    type: "string",
+  },
+  {
+    label: "Number",
+    type: "number",
+  },
+  // {
+  //   label: "Date",
+  //   type: "date",
+  // },
+];
 const AddSchema = ({
   isSchemaModel,
   handlSchemaAddClose,
   setIsSchemaModel,
+  userList,
 }) => {
   const [heading, setHeading] = useState("");
   const [type, setType] = useState("");
-  // const [heading, setHeading] = useState('');
   const [value, setValue] = useState("");
   const [listItems, setListItems] = useState([""]);
   const [error, setError] = useState("");
   const [isRequired, setIsRequired] = useState(false);
-  // from API
   const [supportedTypes, setSupportedTypes] = useState(null);
-  const [supportedOptions, setSupportedoptions] = useState([
-    {
-      label: "Text",
-      type: "string",
-    },
-    {
-      label: "List",
-      type: "string",
-    },
-    {
-      label: "Number",
-      type: "number",
-    },
-    // {
-    //   label: "Date",
-    //   type: "date",
-    // },
-  ]);
+  const [minLength, setMinLength] = useState("");
+  const [maxLength, setMaxLength] = useState("");
+  const [defaultValue, setDefaultValue] = useState("");
+  const [showMinLength, setShowMinLength] = useState(false);
+  const [showMaxLength, setShowMaxLength] = useState(false);
+  const [showDefaultValue, setShowDefaultValue] = useState(false);
+  const [supportedOptions, setSupportedoptions] = useState(options);
+  const [loader, setLoader] = useState(false);
 
   const validateForm = () => {
     if (type === "List") {
@@ -130,6 +140,7 @@ const AddSchema = ({
       }
     } else {
       if (!heading.trim() || !value.trim()) {
+        //one change
         setError("Both heading and value are required");
         return false;
       }
@@ -137,34 +148,68 @@ const AddSchema = ({
     setError("");
     return true;
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-
-    if (type === "List") {
-      console.log({
-        type: type,
-        listHeading: heading,
-        listItems: listItems,
-        required:isRequired
-      });
-    } else {
-      console.log({
-        type: type,
-        heading: heading,
-        value: value,
-        required:isRequired
-      });
-    }
+  const setAllStateNull = () => {
     setIsSchemaModel(false);
     setType("");
     setHeading("");
     setValue("");
-    setListItems([""]);
-    setIsRequired(false)
+    setMinLength("");
+    setMaxLength("");
+    setDefaultValue("");
+    setShowMinLength(false);
+    setShowMaxLength(false);
+    setShowDefaultValue(false);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    setLoader(true);
+    let schemaData = {
+      fieldName: heading,
+      fieldType: type === "Number" ? "number" : "string",
+      options: {},
+      required: isRequired,
+      ...(showMinLength && { minlenght: minLength }),
+      ...(showMaxLength && { maxlength: maxLength }),
+      ...(showDefaultValue && { default: defaultValue }),
+    };
+    if (type === "List") {
+      schemaData = {
+        ...schemaData,
+        options: {
+          enum: listItems.filter((item) => item.trim() !== ""),
+        },
+      };
+    }
+    // console.log(schemaData);
+
+    const token = localStorage.getItem("token");
+    const { data, error } = await addUserSchema(token, schemaData);
+    console.log(data, error);
+    if (error) {
+      setLoader(false);
+      const errorMessage =
+        error?.response?.data?.error?.message || error?.message;
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: errorMessage,
+        // footer: '<a href="#">Why do I have this issue?</a>',
+      });
+    } else {
+      setLoader(false);
+      console.log(data);
+      userList(token);
+      Swal.fire({
+        icon: "success",
+        title: data?.message || "Filed Added Successfully",
+        // footer: '<a href="#">Why do I have this issue?</a>',
+      });
+    }
+    // Reset state
+    setAllStateNull();
     return;
   };
-
   const addListItem = () => {
     setListItems([...listItems, ""]);
   };
@@ -199,195 +244,269 @@ const AddSchema = ({
       setListItems(null);
     };
   }, []);
+  useEffect(() => {
+    console.log(type);
+  }, [type]);
   return (
-    <Modal
-      open={isSchemaModel}
-      onClose={handlSchemaAddClose}
-      aria-labelledby="add-schema-modal"
-    >
-      <Box sx={style}>
-        <Stack
-          direction="row"
-          sx={{
-            flexDirection: "row-reverse",
-            cursor: "pointer",
-            padding: "10px",
-          }}
-          onClick={() => {
-            setIsSchemaModel(false);
-          }}
-        >
-          X
-        </Stack>
-        <Typography variant="h6" align="center" gutterBottom>
-          Add Schema
-        </Typography>
+    <>
+      {loader ? <Loader /> : <></>}
 
-        <Stack>
-          {supportedOptions.length > 0 ? (
-            <Box>
-              <div style={styles.container}>
-                <form onSubmit={handleSubmit}>
-                  <div
-                    style={{
-                      ...styles.container,
-                      maxHeight: "400px",
-                      overflowY: "auto",
-                    }}
-                  >
-                    <label style={styles.label}>Select Type:</label>
-                    <select
-                      style={styles.select}
-                      value={type}
-                      onChange={(e) => {
-                        // console.log(e.target,"value",e.target.value);
-                        setType(e.target.value);
-                        // setFormat("");
-                        // setHeading("");
-                        // setValue("");
-                        // setListItems([""]);
-                        // setError("");
+      <Modal
+        open={isSchemaModel}
+        onClose={handlSchemaAddClose}
+        aria-labelledby="add-schema-modal"
+      >
+        <Box sx={style}>
+          <Stack
+            direction="row"
+            sx={{
+              flexDirection: "row-reverse",
+              cursor: "pointer",
+              padding: "10px",
+            }}
+            onClick={() => {
+              setAllStateNull();
+              setIsSchemaModel(false);
+            }}
+          >
+            X
+          </Stack>
+          <Typography variant="h6" align="center" gutterBottom>
+            Add Schema
+          </Typography>
+
+          <Stack>
+            {supportedOptions.length > 0 ? (
+              <Box>
+                <div style={styles.container}>
+                  <form onSubmit={handleSubmit}>
+                    <div
+                      style={{
+                        ...styles.container,
+                        maxHeight: "400px",
+                        overflowY: "auto",
                       }}
                     >
-                      <option value="">Select Type</option>
-                      {supportedOptions.map((item, idx) => (
-                        <option key={idx} value={item.label} name={item.type}>
-                          {item?.label}
-                        </option>
-                      ))}
-                    </select>
-                    <div style={{}}>
-                      {type && (
-                        <div style={{}}>
-                          <label style={styles.label}>
-                            <input
-                              style={{ margin: "10px" }}
-                              type="checkbox"
-                              checked={isRequired}
-                              onChange={(e) => setIsRequired(e.target.checked)}
-                            />
-                            Is required
-                          </label>
-                        </div>
-                      )}
-                    </div>
-                    {/* If "string" is selected, show the second dropdown */}
-                    {/* {type === "Text" && (
-                      <div style={styles.formGroup}>
-                        <label style={styles.label}>Select Format:</label>
-                        <select
-                          style={styles.select}
-                          value={format}
-                          onChange={(e) => {
-                            setFormat(e.target.value);
-                            setHeading("");
-                            setValue("");
-                            setListItems([""]);
-                            setError("");
-                          }}
-                        >
-                          <option value="">Select...</option>
-                          <option value="list">List</option>
-                          <option value="text">Text</option>
-                        </select>
-                      </div>
-                    )} */}
-
-                    {type === "List" && (
-                      <div style={styles.formGroup}>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>List Heading:</label>
-                          <input
-                            style={styles.input}
-                            type="text"
-                            value={heading}
-                            onChange={(e) => setHeading(e.target.value)}
-                            placeholder="Enter list heading"
-                          />
-                        </div>
-                        <label style={styles.label}>List Items:</label>
-                        {listItems &&
-                          listItems.length > 0 &&
-                          listItems.map((item, index) => (
-                            <div key={index} style={styles.listItemContainer}>
-                              <input
-                                style={styles.input}
-                                type="text"
-                                value={item}
-                                onChange={(e) =>
-                                  updateListItem(index, e.target.value)
-                                }
-                                placeholder={`Item ${index + 1}`}
-                              />
-                              {listItems.length > 1 && (
-                                <button
-                                  type="button"
-                                  onClick={() => removeListItem(index)}
-                                  style={{
-                                    ...styles.button,
-                                    ...styles.removeButton,
-                                  }}
-                                >
-                                  Remove
-                                </button>
-                              )}
+                      <label style={styles.label}>Select Type:</label>
+                      <select
+                        style={styles.select}
+                        value={type}
+                        onChange={(e) => {
+                          setType(e.target.value);
+                        }}
+                      >
+                        <option value="">Select Type</option>
+                        {supportedOptions.map((item, idx) => (
+                          <option key={idx} value={item.label} name={item.type}>
+                            {item?.label}
+                          </option>
+                        ))}
+                      </select>
+                      <div style={{}}>
+                        {/* isRequired  */}
+                        {type && (
+                          <>
+                            <div style={{}}>
+                              <label style={styles.label}>
+                                <input
+                                  style={{ margin: "10px" }}
+                                  type="checkbox"
+                                  checked={isRequired}
+                                  onChange={(e) =>
+                                    setIsRequired(e.target.checked)
+                                  }
+                                />
+                                Is required
+                              </label>
                             </div>
-                          ))}
-                        <button
-                          type="button"
-                          onClick={addListItem}
-                          style={{ ...styles.button, ...styles.addButton }}
-                        >
-                          Add Items
-                        </button>
+                            {type !== "List" && (
+                              <div style={{}}>
+                                {/* Checkbox for Min Length */}
+                                <div>
+                                  <label style={styles.label}>
+                                    <input
+                                      style={{ margin: "10px" }}
+                                      type="checkbox"
+                                      checked={showMinLength}
+                                      onChange={(e) =>
+                                        setShowMinLength(e.target.checked)
+                                      }
+                                    />
+                                    Min Length
+                                  </label>
+                                  {showMinLength && (
+                                    <input
+                                      type="number"
+                                      style={styles.input}
+                                      value={minLength}
+                                      onChange={(e) =>
+                                        setMinLength(e.target.value * 1)
+                                      }
+                                      placeholder="Enter min length"
+                                    />
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Checkbox for Max Length */}
+                            {type !== "List" && (
+                              <div>
+                                <label style={styles.label}>
+                                  <input
+                                    style={{ margin: "10px" }}
+                                    type="checkbox"
+                                    checked={showMaxLength}
+                                    onChange={(e) =>
+                                      setShowMaxLength(e.target.checked)
+                                    }
+                                  />
+                                  Max Length
+                                </label>
+                                {showMaxLength && (
+                                  <input
+                                    type="number"
+                                    style={styles.input}
+                                    value={maxLength}
+                                    onChange={(e) =>
+                                      setMaxLength(e.target.value * 1)
+                                    } //converting to number
+                                    placeholder="Enter max length"
+                                  />
+                                )}
+                              </div>
+                            )}
+
+                            {/* Checkbox for Default Value */}
+                            {type !== "List" && (
+                              <div>
+                                <label style={styles.label}>
+                                  <input
+                                    style={{ margin: "10px" }}
+                                    type="checkbox"
+                                    checked={showDefaultValue}
+                                    onChange={(e) =>
+                                      setShowDefaultValue(e.target.checked)
+                                    }
+                                  />
+                                  Default Value
+                                </label>
+                                {showDefaultValue && (
+                                  <input
+                                    style={styles.input}
+                                    value={defaultValue}
+                                    onChange={(e) => {
+                                      const defaultVal =
+                                        type === "Number"
+                                          ? e.target.value * 1
+                                          : e.target.value;
+                                      setDefaultValue(defaultVal);
+                                    }}
+                                    placeholder="Enter default value"
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
-                    )}
 
-                    {(type === "Text" || type === "Number") && (
-                      <div style={styles.formGroup}>
+                      {type === "List" && (
                         <div style={styles.formGroup}>
-                          <label style={styles.label}>Heading:</label>
-                          <input
-                            style={styles.input}
-                            type="text"
-                            value={heading}
-                            onChange={(e) => setHeading(e.target.value)}
-                            placeholder="Enter heading"
-                          />
+                          <div style={styles.formGroup}>
+                            <label style={styles.label}>List Heading:</label>
+                            <input
+                              style={styles.input}
+                              type="text"
+                              value={heading}
+                              onChange={(e) => setHeading(e.target.value)}
+                              placeholder="Enter list heading"
+                            />
+                          </div>
+                          <label style={styles.label}>List Items:</label>
+                          {listItems &&
+                            listItems.length > 0 &&
+                            listItems.map((item, index) => (
+                              <div key={index} style={styles.listItemContainer}>
+                                <input
+                                  style={styles.input}
+                                  type="text"
+                                  value={item}
+                                  onChange={(e) =>
+                                    updateListItem(index, e.target.value)
+                                  }
+                                  placeholder={`Item ${index + 1}`}
+                                />
+                                {listItems.length > 1 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => removeListItem(index)}
+                                    style={{
+                                      ...styles.button,
+                                      ...styles.removeButton,
+                                    }}
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                          <button
+                            type="button"
+                            onClick={addListItem}
+                            style={{ ...styles.button, ...styles.addButton }}
+                          >
+                            Add Items
+                          </button>
                         </div>
-                        <div style={styles.formGroup}>
-                          <label style={styles.label}>Value:</label>
-                          <input
-                            style={styles.input}
-                            type={type === "Number" ? "number" : "text"}
-                            value={value}
-                            onChange={(e) => setValue(e.target.value)}
-                            placeholder="Enter value"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {error && <div style={styles.error}>{error}</div>}
-
-                    {type &&
-                      (type === "Text" ||
-                        type === "Number" ||
-                        type === "List") && (
-                        <button type="submit" style={styles.button}>
-                          Submit
-                        </button>
                       )}
-                  </div>
-                </form>
-              </div>
-            </Box>
-          ) : (
-            <>Unable to fetch supported types</>
-          )}
-        </Stack>
-      </Box>
-    </Modal>
+
+                      {(type === "Text" || type === "Number") && (
+                        <div style={styles.formGroup}>
+                          <div style={styles.formGroup}>
+                            <label style={styles.label}>Heading:</label>
+                            <input
+                              style={styles.input}
+                              type="text"
+                              value={heading}
+                              onChange={(e) => setHeading(e.target.value)}
+                              placeholder="Enter heading"
+                            />
+                          </div>
+                          <div style={styles.formGroup}>
+                            <label style={styles.label}>Value:</label>
+                            <input
+                              style={styles.input}
+                              type={type === "Number" ? "number" : "text"}
+                              value={value}
+                              onChange={(e) => setValue(e.target.value)}
+                              placeholder="Enter value"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {error && <div style={styles.error}>{error}</div>}
+
+                      {type &&
+                        (type === "Text" ||
+                          type === "Number" ||
+                          type === "List") && (
+                          <button type="submit" style={styles.button}>
+                            Submit
+                          </button>
+                        )}
+                    </div>
+                  </form>
+                </div>
+              </Box>
+            ) : (
+              <>Unable to fetch supported types</>
+            )}
+          </Stack>
+        </Box>
+      </Modal>
+    </>
   );
 };
 export default AddSchema;

@@ -24,7 +24,7 @@
     width: 100%;
     height: 100%;
     background: rgba(255, 255, 255, 0.5); /* Semi-transparent background */
-    z-index: 999; /* Ensure it sits above all other content */
+    z-index: 1301; /* Ensure it sits above all other content */
   }
   
   @keyframes l3 {to{transform: rotate(1turn)}}
