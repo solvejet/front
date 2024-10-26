@@ -302,14 +302,16 @@ dummy data
         <Box
           sx={{
             padding: 2,
-            bgcolor: "background.paper", // Uses theme-based background color
+            bgcolor: "background.paper",
             color: "text.primary",
             borderRadius: "8px",
             boxShadow: 3,
             margin: "0 auto",
             m: 1,
             display: "flex",
-            flexDirection: "row-reverse",
+            flexWrap: "wrap", // Allow wrapping on smaller screens
+            flexDirection: { xs: "column", sm: "row-reverse" }, // Stack vertically on extra-small screens
+            gap: 1, // Space between buttons when wrapped
           }}
         >
           <Button
@@ -318,12 +320,10 @@ dummy data
             size="small"
             component={Link}
             sx={{
-              display: { xs: "none", sm: "flex" },
               p: 1,
-              mx: 1,
               color: "text.primary",
-              "&:hover": {},
               bgcolor: "rgb(53, 212, 114)",
+              width: { xs: "100%", sm: "auto" }, // Full width on extra-small screens
             }}
           >
             Add Contact
@@ -334,17 +334,16 @@ dummy data
             size="small"
             component={Link}
             sx={{
-              display: { xs: "none", sm: "flex" },
               p: 1,
-              mx: 1,
               color: "text.primary",
-              "&:hover": {},
               bgcolor: "rgb(53, 212, 114)",
+              width: { xs: "100%", sm: "auto" }, // Full width on extra-small screens
             }}
           >
             Add Schema
           </Button>
         </Box>
+
         {/* table box */}
         <Box
           sx={{
