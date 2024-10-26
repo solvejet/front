@@ -16,6 +16,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { addUserSchema } from "../../../../api/users/columns/addUserSchema";
 import Loader from "../../../../components/loader/Loader";
+import SnackbarAlert from "../../../../components/snackbar/SnackbarAlert ";
 
 const style = {
   position: "absolute",
@@ -113,11 +114,9 @@ const AddSchema = ({
 }) => {
   const [heading, setHeading] = useState("");
   const [type, setType] = useState("");
-  const [value, setValue] = useState("");
   const [listItems, setListItems] = useState([""]);
   const [error, setError] = useState("");
   const [isRequired, setIsRequired] = useState(false);
-  const [supportedTypes, setSupportedTypes] = useState(null);
   const [minLength, setMinLength] = useState("");
   const [maxLength, setMaxLength] = useState("");
   const [defaultValue, setDefaultValue] = useState("");
@@ -126,7 +125,11 @@ const AddSchema = ({
   const [showDefaultValue, setShowDefaultValue] = useState(false);
   const [supportedOptions, setSupportedoptions] = useState(options);
   const [loader, setLoader] = useState(false);
-
+  // snackbar
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const handleSnackbarClose = () => setSnackbarOpen(false);
   const validateForm = () => {
     if (type === "List") {
       if (!heading.trim()) {
@@ -139,9 +142,9 @@ const AddSchema = ({
         return false;
       }
     } else {
-      if (!heading.trim() || !value.trim()) {
+      if (!heading.trim()) {
         //one change
-        setError("Both heading and value are required");
+        setError("Heading is required");
         return false;
       }
     }
@@ -152,7 +155,6 @@ const AddSchema = ({
     setIsSchemaModel(false);
     setType("");
     setHeading("");
-    setValue("");
     setMinLength("");
     setMaxLength("");
     setDefaultValue("");
@@ -185,28 +187,24 @@ const AddSchema = ({
 
     const token = localStorage.getItem("token");
     const { data, error } = await addUserSchema(token, schemaData);
+    setLoader(false);
     console.log(data, error);
     if (error) {
-      setLoader(false);
       const errorMessage =
-        error?.response?.data?.error?.message || error?.message;
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: errorMessage,
-        // footer: '<a href="#">Why do I have this issue?</a>',
-      });
+        error?.response?.data?.error?.message ||
+        error?.message ||
+        "Something went wrong";
+      setSnackbarSeverity("error");
+      setSnackbarMessage(errorMessage);
     } else {
-      setLoader(false);
-      console.log(data);
-      userList(token);
-      Swal.fire({
-        icon: "success",
-        title: data?.message || "Filed Added Successfully",
-        // footer: '<a href="#">Why do I have this issue?</a>',
-      });
+      setSnackbarSeverity("success");
+      setSnackbarMessage(data?.message || "Field Added Successfully");
+      setTimeout(() => {
+        userList(token);
+      }, [2000]);
     }
     // Reset state
+    setSnackbarOpen(true);
     setAllStateNull();
     return;
   };
@@ -223,24 +221,11 @@ const AddSchema = ({
     newItems[index] = value;
     setListItems(newItems);
   };
-  // fetch supported type
-  useEffect(() => {
-    const data = async () => {
-      try {
-        const getSchema = await axios.get("data/getSchema.json");
-        console.log("Fetched Data:", getSchema?.data?.supportedTypes);
-        setSupportedTypes(getSchema?.data?.supportedTypes || {}); // Ensure it's not null
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    data();
-  }, []);
+
   // unMounting
   useEffect(() => {
     return () => {
       setHeading(null);
-      setValue(null);
       setListItems(null);
     };
   }, []);
@@ -250,7 +235,13 @@ const AddSchema = ({
   return (
     <>
       {loader ? <Loader /> : <></>}
-
+      {/* Snackbar component */}
+      <SnackbarAlert
+        open={snackbarOpen}
+        handleClose={handleSnackbarClose}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+      />
       <Modal
         open={isSchemaModel}
         onClose={handlSchemaAddClose}
@@ -471,16 +462,6 @@ const AddSchema = ({
                               value={heading}
                               onChange={(e) => setHeading(e.target.value)}
                               placeholder="Enter heading"
-                            />
-                          </div>
-                          <div style={styles.formGroup}>
-                            <label style={styles.label}>Value:</label>
-                            <input
-                              style={styles.input}
-                              type={type === "Number" ? "number" : "text"}
-                              value={value}
-                              onChange={(e) => setValue(e.target.value)}
-                              placeholder="Enter value"
                             />
                           </div>
                         </div>

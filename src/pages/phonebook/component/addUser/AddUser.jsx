@@ -70,7 +70,10 @@ const AddModal = ({ open, handleClose, handleAddContact, fields }) => {
             Object.keys(fields).map((field) => {
               const fieldProps = fields[field];
               const isRequired = fieldProps.required;
-
+              // Check if field is 'assignedAdmin' and skip rendering its input
+              if (field === "assignedAdmin") {
+                return null; // Do not render input for assignedAdmin
+              }
               return (
                 <Controller
                   key={field}
