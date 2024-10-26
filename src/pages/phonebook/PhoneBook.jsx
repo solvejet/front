@@ -21,6 +21,7 @@ import AddSchema from "./component/addSchema/AddSchema";
 import Swal from "sweetalert2";
 import AddModal from "./component/addUser/AddUser";
 import AssignModal from "./component/assignUser/AssignUser";
+import SnackbarAlert from "../../components/snackbar/SnackbarAlert ";
 
 const generateColumnsFromSchema = (schema) => {
   return Object.keys(schema).map((key) => ({
@@ -76,6 +77,10 @@ const PhoneBook = () => {
   const [inputFields, setInputFields] = useState();
   const [loader, setLoader] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const handleSnackbarClose = () => setSnackbarOpen(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -99,39 +104,36 @@ const PhoneBook = () => {
   const handleAddContact = async (userData) => {
     const token = localStorage.getItem("token");
     const { data, error } = await createUser(token, userData);
+    console.log(data, error, "check");
     if (error) {
       const errorMessage =
-        error?.response?.data?.error?.message || error?.message;
-
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: errorMessage,
-      });
+        error?.response?.data?.error?.message ||
+        error?.message ||
+        "Something went wrong";
+      setSnackbarSeverity("error");
+      setSnackbarMessage(errorMessage);
     } else {
-      Swal.fire({
-        icon: "success",
-        title: "User Added Successfully",
-      });
-      userList(token);
+      setSnackbarSeverity("success");
+      setSnackbarMessage(data?.message || "Field Added Successfully");
     }
+    setSnackbarOpen(true);
+    userList(token);
   };
   // Function to handle user deletion
   const handleDeleteUser = async (id) => {
     const token = localStorage.getItem("token");
     // Assuming you have a deleteUser function to handle the deletion
-    const { error } = await createUser(token, id);
+    const { error, data } = await createUser(token, id);
     if (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Failed to delete user.",
-      });
+      const errorMessage =
+        error?.response?.data?.error?.message ||
+        error?.message ||
+        "Something went wrong";
+      setSnackbarSeverity("error");
+      setSnackbarMessage(errorMessage);
     } else {
-      Swal.fire({
-        icon: "success",
-        title: "User Deleted Successfully",
-      });
+      setSnackbarSeverity("success");
+      setSnackbarMessage(data?.message || "Field Added Successfully");
       userList(token); // Refresh the user list after deletion
     }
   };
@@ -178,6 +180,13 @@ const PhoneBook = () => {
   return (
     <>
       {loader && <Loader />}
+      {/* Snackbar component */}
+      <SnackbarAlert
+        open={snackbarOpen}
+        handleClose={handleSnackbarClose}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+      />
       <Box>
         <Box
           sx={{
@@ -252,7 +261,7 @@ const PhoneBook = () => {
 
           <Box sx={{}}>
             <DataGrid
-              rows={tableData}
+              rows={filteredRows}
               columns={allColumns}
               initialState={{
                 pagination: {
