@@ -17,6 +17,7 @@ import { userColumns } from "../../api/users/columns/getColumns";
 import { getUserList } from "../../api/users/getUserList";
 import Loader from "../../components/loader/Loader";
 import { createUser } from "../../api/users/createUser";
+import { deleteUser } from "../../api/users/deleteUser";
 import AddSchema from "./component/addSchema/AddSchema";
 import Swal from "sweetalert2";
 import AddModal from "./component/addUser/AddUser";
@@ -100,7 +101,9 @@ const PhoneBook = () => {
     setLoader(false);
   };
   // Function to handle deletion of all users in a column
-
+  useEffect(() => {
+    console.log(tableData);
+  }, [tableData]);
   const handleAddContact = async (userData) => {
     const token = localStorage.getItem("token");
     const { data, error } = await createUser(token, userData);
@@ -123,7 +126,8 @@ const PhoneBook = () => {
   const handleDeleteUser = async (id) => {
     const token = localStorage.getItem("token");
     // Assuming you have a deleteUser function to handle the deletion
-    const { error, data } = await createUser(token, id);
+
+    const { error, data } = await deleteUser(token, id);
     if (error) {
       const errorMessage =
         error?.response?.data?.error?.message ||
@@ -134,8 +138,9 @@ const PhoneBook = () => {
     } else {
       setSnackbarSeverity("success");
       setSnackbarMessage(data?.message || "Field Added Successfully");
-      userList(token); // Refresh the user list after deletion
     }
+    setSnackbarOpen(true);
+    userList(token); // Refresh the user list after deletion
   };
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -170,7 +175,7 @@ const PhoneBook = () => {
     headerName: "Actions",
     width: 120,
     renderCell: (params) => (
-      <IconButton onClick={() => handleDeleteUser(params.row.id)}>
+      <IconButton onClick={() => handleDeleteUser(params.row?._id)}>
         <DeleteIcon />
       </IconButton>
     ),
