@@ -9,7 +9,9 @@ import {
   Select,
   InputLabel,
   FormControl,
+  Stack,
 } from "@mui/material";
+
 import { useState, useEffect, useMemo } from "react";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { IconButton } from "@mui/material";
@@ -18,7 +20,7 @@ import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { userColumns } from "../../api/users/columns/getColumns";
 import { getUserList } from "../../api/users/getUserList";
-import { useTable } from "react-table";
+import { useTable, useGlobalFilter } from "react-table";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -76,6 +78,16 @@ const generateColumnsFromSchema = (schema) => {
     },
   }));
 };
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+  ...theme.applyStyles("dark", {
+    backgroundColor: "#1A2027",
+  }),
+}));
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -173,6 +185,28 @@ const PhoneBook = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [page, setPage] = useState(0);
   const [loader, setLoader] = useState(false);
+  const [searchInput, setSearchInput] = useState(""); // New state for search input
+  const tableColumns = useMemo(() => columns, [columns]);
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    setGlobalFilter,
+  } = useTable(
+    {
+      columns: tableColumns,
+      data: tableData,
+    },
+    useGlobalFilter
+  );
+  // Add search handler function
+  const handleSearchChange = (event) => {
+    setSearchInput(event.target.value || "");
+    setGlobalFilter(event.target.value || ""); // Set global filter to search input
+  };
+
   const userList = async (token) => {
     const response = await getUserList(token);
     // console.log(response);
@@ -221,12 +255,7 @@ dummy data
   );
 
 */
-  const tableColumns = useMemo(() => columns, [columns]);
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({
-      columns: tableColumns,
-      data: tableData,
-    });
+
   useEffect(() => {
     console.log(tableData, "tableData");
     console.log(tableColumns, "tableColumns");
@@ -335,9 +364,21 @@ dummy data
             component="h2"
             align="left"
             gutterBottom
+           
           >
             Contact Management
           </Typography>
+          <Stack spacing={2} direction="row-reverse" sx={{ m: 1 }}>
+            <TextField
+              label="Search"
+              variant="outlined"
+              size="small"
+              value={searchInput}
+              onChange={handleSearchChange}
+              sx={{ width: 200 }}
+            />
+          </Stack>
+
           <TableContainer component={Paper} sx={{ maxHeight: 340 }}>
             <Table {...getTableProps()} stickyHeader>
               <TableHead>
