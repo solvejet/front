@@ -11,6 +11,9 @@ import {
 } from "@mui/material";
 import { jwtDecode } from "jwt-decode";
 import { useState, useEffect, useMemo } from "react";
+import { getAdminList } from "../../../../api/admin/getAdminList";
+import Loader from "../../../../components/loader/Loader";
+import SnackbarAlert from "../../../../components/snackbar/SnackbarAlert ";
 const style = {
   position: "absolute",
   top: "50%",
@@ -22,8 +25,41 @@ const style = {
   p: 4,
 };
 const AssignModal = ({ isAssignOpen, handleAssignClose }) => {
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const handleSnackbarClose = () => setSnackbarOpen(false);
+  const [loader, setLoader] = useState(false);
+  const [admins, setAdmins] = useState([]);
+  useEffect(() => {
+    setLoader(true);
+    const getData = async () => {
+      const token = localStorage.getItem("token");
+      const { data, error } = await getAdminList(token);
+      if (error) {
+        const errorMessage =
+          error?.response?.data?.error?.message ||
+          error?.message ||
+          "Something went wrong";
+        setSnackbarSeverity("error");
+        setSnackbarMessage(errorMessage);
+      } else {
+        setAdmins(data?.admins);
+      }
+    };
+    setLoader(false);
+
+    getData();
+  }, []);
   return (
     <Box>
+      {loader && <Loader />}
+      <SnackbarAlert
+        open={snackbarOpen}
+        handleClose={handleSnackbarClose}
+        severity={snackbarSeverity}
+        message={snackbarMessage}
+      />
       <Modal
         open={isAssignOpen}
         onClose={handleAssignClose}
@@ -54,15 +90,19 @@ const AssignModal = ({ isAssignOpen, handleAssignClose }) => {
 
             {/* Group Select Field */}
             <FormControl fullWidth margin="normal">
-              <InputLabel id="group-select-label">Staff</InputLabel>
+              <InputLabel id="group-select-label">Admin</InputLabel>
               <Select
                 labelId="group-select-label"
                 id="group-select"
                 label="Group"
               >
-                <MenuItem value={10}>Staff 1</MenuItem>
-                <MenuItem value={20}>Staff 2</MenuItem>
-                <MenuItem value={30}>Staff 3</MenuItem>
+                {admins?.map((admin, idx) => {
+                  return (
+                    <MenuItem key={idx} value={10}>
+                      {admin?.username}
+                    </MenuItem>
+                  );
+                })}
               </Select>
             </FormControl>
 

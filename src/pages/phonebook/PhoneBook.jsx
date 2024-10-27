@@ -24,13 +24,25 @@ import AddModal from "./component/addUser/AddUser";
 import AssignModal from "./component/assignUser/AssignUser";
 import SnackbarAlert from "../../components/snackbar/SnackbarAlert ";
 
-const generateColumnsFromSchema = (schema) => {
+const generateColumnsFromSchema = (schema, setIsAssignOpen) => {
   return Object.keys(schema).map((key) => ({
     field: key,
     headerName: key.charAt(0).toUpperCase() + key.slice(1),
     width: 200, // Increase width for more space
     renderCell: (params) => {
       const value = params.value;
+      if (key === "assignedAdmin") {
+        return (
+          <>
+            {value || "NA"}
+            <EditIcon
+              fontSize="small"
+              style={{ marginLeft: "5px", cursor: "pointer" }}
+              onClick={() => setIsAssignOpen(true)}
+            />
+          </>
+        );
+      }
       if (typeof value === "object" && value !== null) {
         return (
           <div style={{ whiteSpace: "normal", wordWrap: "break-word" }}>
@@ -102,8 +114,8 @@ const PhoneBook = () => {
   };
   // Function to handle deletion of all users in a column
   useEffect(() => {
-    console.log(tableData);
-  }, [tableData]);
+    console.log(tableData), "tableData";
+  }, [tableData, columns]);
   const handleAddContact = async (userData) => {
     const token = localStorage.getItem("token");
     const { data, error } = await createUser(token, userData);
@@ -149,8 +161,9 @@ const PhoneBook = () => {
       const { data, error } = await userColumns(token);
       const fields = data?.fields || {};
       if (!error) {
+        console.log(fields);
         setInputFields(fields);
-        setColumns(generateColumnsFromSchema(fields));
+        setColumns(generateColumnsFromSchema(fields, setIsAssignOpen));
       }
       setLoader(false);
     };
@@ -160,14 +173,23 @@ const PhoneBook = () => {
   }, []);
 
   const filteredRows = useMemo(() => {
-    return tableData.filter((row) =>
-      columns.some((column) =>
-        row[column.field]
-          ?.toString()
-          .toLowerCase()
-          .includes(searchInput.toLowerCase())
-      )
-    );
+    return tableData
+      .map((row) => {
+        const updatedRow = {
+          ...row,
+          assignedAdmin: row.assignedAdmin || "NA",
+        };
+
+        return updatedRow;
+      })
+      .filter((row) =>
+        columns.some((column) =>
+          row[column.field]
+            ?.toString()
+            .toLowerCase()
+            .includes(searchInput.toLowerCase())
+        )
+      );
   }, [tableData, columns, searchInput]);
 
   const actionColumn = {
@@ -181,7 +203,9 @@ const PhoneBook = () => {
     ),
   };
   const allColumns = useMemo(() => [...columns, actionColumn], [columns]);
-
+  useEffect(() => {
+    console.log(allColumns, filteredRows, "dataGrid");
+  }, [allColumns, filteredRows]);
   return (
     <>
       {loader && <Loader />}
