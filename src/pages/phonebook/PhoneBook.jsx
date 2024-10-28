@@ -11,6 +11,7 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Tooltip from "@mui/material/Tooltip";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { userColumns } from "../../api/users/columns/getColumns";
@@ -197,9 +198,11 @@ const PhoneBook = () => {
     headerName: "Actions",
     width: 120,
     renderCell: (params) => (
-      <IconButton onClick={() => handleDeleteUser(params.row?._id)}>
-        <DeleteIcon />
-      </IconButton>
+      <Tooltip title="Delete User">
+        <IconButton onClick={() => handleDeleteUser(params.row?._id)}>
+          <DeleteIcon color="error" />
+        </IconButton>
+      </Tooltip>
     ),
   };
   const allColumns = useMemo(() => [...columns, actionColumn], [columns]);
@@ -219,7 +222,7 @@ const PhoneBook = () => {
       <Box>
         <Box
           sx={{
-            padding: 2,
+            padding: "8px 16px",
             bgcolor: "background.paper",
             borderRadius: "8px",
             boxShadow: 3,
@@ -238,6 +241,7 @@ const PhoneBook = () => {
             sx={{
               p: 1,
               bgcolor: "rgb(53, 212, 114)",
+              color: "white",
               width: { xs: "100%", sm: "auto" },
             }}
           >
@@ -251,6 +255,7 @@ const PhoneBook = () => {
             sx={{
               p: 1,
               bgcolor: "rgb(53, 212, 114)",
+              color: "white",
               width: { xs: "100%", sm: "auto" },
             }}
           >
@@ -260,7 +265,7 @@ const PhoneBook = () => {
 
         <Box
           sx={{
-            padding: 2,
+            padding: "8px 16px",
             bgcolor: "background.paper",
             borderRadius: "8px",
             boxShadow: 3,
@@ -290,6 +295,7 @@ const PhoneBook = () => {
 
           <Box sx={{}}>
             <DataGrid
+              slots={{ toolbar: CustomToolbar }}
               rows={filteredRows}
               columns={allColumns}
               initialState={{
@@ -327,3 +333,8 @@ const PhoneBook = () => {
 };
 
 export default PhoneBook;
+const CustomToolbar = (props) => (
+  <div style={{ color: 'rgb(53, 212, 114)', padding: '10px' }}>
+    <GridToolbar {...props} />
+  </div>
+);

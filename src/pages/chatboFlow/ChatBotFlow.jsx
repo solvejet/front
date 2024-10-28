@@ -50,7 +50,7 @@ const ChatBotFlow = () => {
   const [id, setId] = useState(null);
   const [isSelected, setIsSelected] = useState(false);
   const [isDrawer, setIsDrawer] = useState(false);
-  // const { getNodes, getEdges } = useReactFlow();
+  // const { getNodes, getEdges ,setNodes} = useReactFlow();
   const toggleDrawer = () => setIsDrawer(!isDrawer);
 
   const nodeTypes = useMemo(

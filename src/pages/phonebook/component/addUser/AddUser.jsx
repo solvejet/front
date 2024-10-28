@@ -130,11 +130,21 @@ const AddModal = ({ open, handleClose, handleAddContact, fields }) => {
               );
             })}
 
-          <Box display="flex" justifyContent="space-between" mt={3}>
-            <Button type="submit" variant="contained" color="primary">
+          <Box display="flex" justifyContent="space-between" m={1}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{
+                p: 1,
+                bgcolor: "rgb(53, 212, 114)",
+                color: "white",
+                width: { xs: "100%", sm: "auto" },
+              }}
+            >
               Submit
             </Button>
-            <Button variant="outlined" color="secondary" onClick={handleClose}>
+            <Button variant="outlined" color="secondary" sx={{border:"1px solid rgb(53, 212, 114)",color:"rgb(53, 212, 114)"}} onClick={handleClose}>
               Cancel
             </Button>
           </Box>
