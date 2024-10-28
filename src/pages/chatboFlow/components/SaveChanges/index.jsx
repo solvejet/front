@@ -17,6 +17,8 @@ export const SaveBtn = () => {
         mode: "success",
         text: "flow saved successfully",
       });
+      console.log(unConnectedNodes)
+      localStorage.setItem("chatbotFlow", JSON.stringify(unConnectedNodes));
     } else {
       setSaveResp({
         mode: "danger",

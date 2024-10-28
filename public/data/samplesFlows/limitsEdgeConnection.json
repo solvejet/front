@@ -1,0 +1,152 @@
+{
+    "nodes": [
+        {
+            "id": "dropId_1",
+            "type": "customNode",
+            "position": {
+                "x": -199.3014024073072,
+                "y": 337.16351412097663
+            },
+            "data": {
+                "type": "messageNode",
+                "heading": "Simple text",
+                "content": ""
+            },
+            "width": 370,
+            "height": 219,
+            "selected": false,
+            "positionAbsolute": {
+                "x": -199.3014024073072,
+                "y": 337.16351412097663
+            },
+            "dragging": false
+        },
+        {
+            "id": "dropId_2",
+            "type": "customNode",
+            "position": {
+                "x": 290.4163254185679,
+                "y": -1.101000541911418
+            },
+            "data": {
+                "type": "imageNode",
+                "heading": "Image message",
+                "content": ""
+            },
+            "width": 226,
+            "height": 169,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 290.4163254185679,
+                "y": -1.101000541911418
+            },
+            "dragging": false
+        },
+        {
+            "id": "dropId_3",
+            "type": "customNode",
+            "position": {
+                "x": 564.0708104444196,
+                "y": 66.28467313939291
+            },
+            "data": {
+                "type": "audioNode",
+                "heading": "Audio message",
+                "content": ""
+            },
+            "width": 236,
+            "height": 169,
+            "selected": true,
+            "positionAbsolute": {
+                "x": 564.0708104444196,
+                "y": 66.28467313939291
+            },
+            "dragging": false
+        },
+        {
+            "id": "dropId_4",
+            "type": "customNode",
+            "position": {
+                "x": 826.4126264300791,
+                "y": -6.524292796129657
+            },
+            "data": {
+                "type": "imageNode",
+                "heading": "Image message",
+                "content": ""
+            },
+            "width": 226,
+            "height": 169,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 826.4126264300791,
+                "y": -6.524292796129657
+            },
+            "dragging": false
+        },
+        {
+            "id": "dropId_5",
+            "type": "customNode",
+            "position": {
+                "x": 453.771907544721,
+                "y": -358.7184049219342
+            },
+            "data": {
+                "type": "messageNode",
+                "heading": "Simple text",
+                "content": ""
+            },
+            "width": 370,
+            "height": 219,
+            "selected": false,
+            "positionAbsolute": {
+                "x": 453.771907544721,
+                "y": -358.7184049219342
+            },
+            "dragging": false
+        }
+    ],
+    "edges": [
+        {
+            "source": "dropId_2",
+            "sourceHandle": "h-2",
+            "target": "dropId_1",
+            "targetHandle": "h-1",
+            "animated": true,
+            "id": "1"
+        },
+        {
+            "source": "dropId_3",
+            "sourceHandle": "h-2",
+            "target": "dropId_1",
+            "targetHandle": "h-1",
+            "animated": true,
+            "id": "2"
+        },
+        {
+            "source": "dropId_4",
+            "sourceHandle": "h-2",
+            "target": "dropId_1",
+            "targetHandle": "h-1",
+            "animated": true,
+            "id": "3"
+        },
+        {
+            "source": "dropId_5",
+            "sourceHandle": "h-2",
+            "target": "dropId_2",
+            "targetHandle": "h-1",
+            "animated": true,
+            "id": "4"
+        },
+        {
+            "source": "dropId_5",
+            "sourceHandle": "h-2",
+            "target": "dropId_3",
+            "targetHandle": "h-1",
+            "animated": true,
+            "id": "5",
+            "selected": false
+        }
+    ]
+}

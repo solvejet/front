@@ -12,27 +12,25 @@ import SaveIcon from "@mui/icons-material/Save";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { useEffect } from "react";
 
-export const CustomNode = ({ data, selected }) => {
-  const { setNodes, type } = data;
+export const CustomNode = ({ data, selected, setNodes }) => {
+  const { type, nodeOptions = [] } = data;
   const { nodeInternals, edges } = useStore((st) => ({
     nodeInternals: st.nodeInternals,
     edges: st.edges,
   }));
-  useEffect(() => {
-    console.log(data, "data");
-  }, [data]);
+ 
   const nodeId = useNodeId();
 
   const singleSourceConnect = useMemo(() => {
     const node = nodeInternals.get(nodeId);
     const connectedEdges = getConnectedEdges([node], edges);
-    
-    return connectedEdges.filter(edge => edge.source === nodeId).length < 2;
+
+    return connectedEdges.filter((edge) => edge.source === nodeId).length < 2;
   }, [nodeInternals, edges, nodeId]);
 
   // State to manage the text and additional options
   const [message, setMessage] = useState(data.content || "");
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState(nodeOptions);
   const [audioFile, setAudioFile] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
   const [documentFile, setDocumentFile] = useState(null);
@@ -51,23 +49,32 @@ export const CustomNode = ({ data, selected }) => {
   };
 
   const addOption = () => {
-    setOptions((prevOptions) => [...prevOptions, ""]);
+    setOptions((prevOptions) => {
+      const newOptions = [...prevOptions, ""]; // Add an empty string for the new option
+      data.nodeOptions = newOptions; // Update the data with new options
+      return newOptions;
+    });
   };
   const removeOption = (index) => {
-    setOptions((prevOptions) => prevOptions.filter((_, i) => i !== index));
+    setOptions((prevOptions) => {
+      const newOptions = prevOptions.filter((_, i) => i !== index); // Remove the option
+      data.nodeOptions = newOptions; // Update the data with the filtered options
+      return newOptions;
+    });
   };
   const handleOptionChange = (index, value) => {
     const updatedOptions = [...options];
-    updatedOptions[index] = value;
+    updatedOptions[index] = value; // Update the specific option
     setOptions(updatedOptions);
+    data.nodeOptions = updatedOptions; // Update the data with the changed options
   };
 
   const removeNodeCallback = (nodeId) => {
     setNodes((nds) => nds.filter((node) => node.id !== nodeId));
   };
-  const removeNode = () => {
+  const removeNode = (e) => {
     // Implement node removal logic
-    console.log(`Node ${nodeId} removed`);
+    // console.log(`Node ${nodeId} removed`);
     // You would likely use setNodes or equivalent to remove this node from the flow
     if (removeNodeCallback) {
       removeNodeCallback(nodeId);
@@ -82,7 +89,7 @@ export const CustomNode = ({ data, selected }) => {
       console.log("Image file selected:", file);
     }
   };
-  
+
   const handleVideoUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -92,7 +99,7 @@ export const CustomNode = ({ data, selected }) => {
       console.log("Video file selected:", file);
     }
   };
-  
+
   const handleDocumentUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -102,7 +109,7 @@ export const CustomNode = ({ data, selected }) => {
       console.log("Document file selected:", file);
     }
   };
-  
+
   return (
     <div
       className={`card p-1 ${
@@ -138,44 +145,54 @@ export const CustomNode = ({ data, selected }) => {
       <div className="card-body">
         {/* Conditional rendering based on the type of node */}
         {data.type === "messageNode" ? (
-        <>
-        <TextField
-          label="Type your message"
-          value={message}
-          onChange={handleInputChange}
-          fullWidth
-          multiline
-          rows={2}
-          sx={{ marginBottom: "10px" }}
-        />
-      
-        {/* Dynamic option fields */}
-        {options.map((option, index) => (
-          <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+          <>
             <TextField
-              label={`Option ${index + 1}`}
-              value={option}
-              onChange={(e) => handleOptionChange(index, e.target.value)}
+              label="Type your message"
+              value={message}
+              onChange={handleInputChange}
               fullWidth
-              sx={{ marginRight: "10px" }}
+              multiline
+              rows={2}
+              sx={{ marginBottom: "10px" }}
             />
-            <IconButton onClick={() => removeOption(index)}>
-              <DeleteIcon />
-            </IconButton>
-          </div>
-        ))}
-      
-        {/* Add option button */}
-        <Button
-          variant="outlined"
-          fullWidth
-          sx={{ color: "#f28b82", borderColor: "#f28b82" }}
-          onClick={addOption}
-        >
-          Add option
-        </Button>
-      </>
-      
+
+            {/* Dynamic option fields */}
+            {options.length > 0 ? (
+              options.map((option, index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <TextField
+                    label={`Option ${index + 1}`}
+                    value={option}
+                    onChange={(e) => handleOptionChange(index, e.target.value)}
+                    fullWidth
+                    sx={{ marginRight: "10px" }}
+                  />
+                  <IconButton onClick={() => removeOption(index)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </div>
+              ))
+            ) : (
+              <Typography></Typography> // Fallback UI
+            )}
+
+            {/* Add option button */}
+            <Button
+              variant="outlined"
+              fullWidth
+              sx={{ color: "#f28b82", borderColor: "#f28b82" }}
+              onClick={addOption}
+            >
+              Add option
+            </Button>
+          </>
         ) : data.type === "audioNode" ? (
           <>
             <Typography variant="body1" gutterBottom>
