@@ -18,6 +18,8 @@ import RouterPaths from "./route.paths";
 import ChatBot from "./pages/chatbot/ChatBot";
 import ChatBotFlow from "./pages/chatboFlow/ChatBotFlow";
 import PhoneBook from "./pages/phonebook/PhoneBook";
+import Templates from "./pages/templates/Templates";
+import Home from "./pages/templates/Home";
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Get auth state
 
@@ -76,6 +78,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <PhoneBook />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={RouterPaths.TEMPLATES}
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={RouterPaths.TEMPLATES_CREATE}
+              element={
+                <ProtectedRoute>
+                  <Templates />
                 </ProtectedRoute>
               }
             />
