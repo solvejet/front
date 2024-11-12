@@ -105,13 +105,25 @@ const PhoneBook = () => {
 
   const userList = async (token) => {
     setLoader(true);
-    const response = await getUserList(token);
-    const formattedData = response?.users.map((user, index) => ({
-      id: index, // Ensure each row has a unique id
-      ...user,
-    }));
-    setTableData(formattedData || []);
-    setLoader(false);
+    const { data, error } = await getUserList(token);
+    console.log(data, "123123");
+    if (!error) {
+      const formattedData = data?.users?.map((user, index) => ({
+        id: index, // Ensure each row has a unique id
+        ...user,
+      }));
+      // console.log(formattedData, "formattedData");
+      setTableData(formattedData || []);
+      setLoader(false);
+    } else {
+      const errorMessage =
+        error?.response?.data?.error?.message ||
+        error?.message ||
+        "Something went wrong";
+      setSnackbarSeverity("error");
+      setSnackbarMessage(errorMessage);
+      setLoader(false);
+    }
   };
   // Function to handle deletion of all users in a column
   useEffect(() => {
@@ -128,6 +140,7 @@ const PhoneBook = () => {
         "Something went wrong";
       setSnackbarSeverity("error");
       setSnackbarMessage(errorMessage);
+      setLoader(false);
     } else {
       setSnackbarSeverity("success");
       setSnackbarMessage(data?.message || "Field Added Successfully");
@@ -178,7 +191,7 @@ const PhoneBook = () => {
       .map((row) => {
         const updatedRow = {
           ...row,
-          assignedAdmin: row.assignedAdmin || "NA",
+          assignedAdmin: row.assignedAdmin?.username || "NA",
         };
 
         return updatedRow;
@@ -334,7 +347,7 @@ const PhoneBook = () => {
 
 export default PhoneBook;
 const CustomToolbar = (props) => (
-  <div style={{ color: 'rgb(53, 212, 114)', padding: '10px' }}>
+  <div style={{ color: "rgb(53, 212, 114)", padding: "10px" }}>
     <GridToolbar {...props} />
   </div>
 );

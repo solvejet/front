@@ -25,6 +25,7 @@ const style = {
 };
 
 const AddModal = ({ open, handleClose, handleAddContact, fields }) => {
+  console.log(fields)
   const token = localStorage.getItem("token");
   const decoded = jwtDecode(token);
   const id = decoded?.id;

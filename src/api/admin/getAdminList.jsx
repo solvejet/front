@@ -4,8 +4,6 @@ export const getAdminList = async (token) => {
     const response = await apiClient.get("/admin/list", {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        "Custom-Header": "Custom-Value",
       },
     });
     return { data: response.data, error: null }; // Return data and null error return response.data;  // Assuming you want to return the response data

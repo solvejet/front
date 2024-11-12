@@ -1,11 +1,9 @@
 import { apiClient } from "../axios";
 export const deleteUser = async (token, id) => {
   try {
-    const response = await apiClient.delete(`/user/${id}`,  {
+    const response = await apiClient.delete(`/user/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        "Custom-Header": "Custom-Value",
       },
     });
     return { data: response.data, error: null }; // Return data and null error return response.data;  // Assuming you want to return the response data
