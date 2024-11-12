@@ -20,6 +20,7 @@ import ChatBotFlow from "./pages/chatboFlow/ChatBotFlow";
 import PhoneBook from "./pages/phonebook/PhoneBook";
 import Templates from "./pages/templates/Templates";
 import Home from "./pages/templates/Home";
+import Media from "./pages/media/Media";
 function App() {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Get auth state
 
@@ -94,6 +95,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Templates />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path={RouterPaths.MEDIA}
+              element={
+                <ProtectedRoute>
+                  <Media />
                 </ProtectedRoute>
               }
             />

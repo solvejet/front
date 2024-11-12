@@ -6,6 +6,7 @@ const RouterPaths = {
   CHATBOT: "/chatbot",
   CHATBOT_FLOW: "/chatbot-flow",
   PHONEBOOK: "/phonebook",
+  MEDIA:"/media",
   TEMPLATES: "/template",
   TEMPLATES_CREATE: "/template/create",
 };
