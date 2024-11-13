@@ -106,7 +106,7 @@ const PhoneBook = () => {
   const userList = async (token) => {
     setLoader(true);
     const { data, error } = await getUserList(token);
-    console.log(data, "123123");
+    // console.log(data, "123123");
     if (!error) {
       const formattedData = data?.users?.map((user, index) => ({
         id: index, // Ensure each row has a unique id
