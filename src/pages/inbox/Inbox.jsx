@@ -30,7 +30,6 @@ const chats = {
     { message: "Can we meet tomorrow?", sender: "Jane Smith", status: "Seen" },
   ],
 };
-const token = localStorage.getItem("token");
 const Inbox = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messageInput, setMessageInput] = useState("");
@@ -41,7 +40,8 @@ const Inbox = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const userList = async (token) => {
+  const userList = async () => {
+    const token = localStorage.getItem("token");
     setLoader(true);
     const { data, error } = await getUserList(token);
     const users = data?.users;
@@ -76,8 +76,7 @@ const Inbox = () => {
   };
 
   useEffect(() => {
-    console.log(token, "token");
-    userList(token);
+    userList();
   }, []);
 
   const handleUserClick = (user) => {

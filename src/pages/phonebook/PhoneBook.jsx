@@ -127,7 +127,7 @@ const PhoneBook = () => {
   };
   // Function to handle deletion of all users in a column
   useEffect(() => {
-    console.log(tableData), "tableData";
+    // console.log(tableData), "tableData";
   }, [tableData, columns]);
   const handleAddContact = async (userData) => {
     const token = localStorage.getItem("token");

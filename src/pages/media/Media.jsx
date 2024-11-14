@@ -12,7 +12,7 @@ import {
   DialogTitle,
   IconButton,
 } from "@mui/material"; // MUI Dialog components
-const token = localStorage.getItem("token");
+// const token = localStorage.getItem("token");
 const API_BASE_URL = config.baseURL;
 const PreviewFile = ({ openPreview, previewMedia, setOpenPreview }) => {
   return (
@@ -78,6 +78,7 @@ const Media = () => {
   const [openPreview, setOpenPreview] = useState(false);
   const [previewMedia, setPreviewMedia] = useState(null);
   const fetchMediaList = async () => {
+    const token = localStorage.getItem("token");
     if (!token) {
       // alert("Please enter a JWT token");
       return;
@@ -113,6 +114,7 @@ const Media = () => {
   };
 
   const handleFileDrop = async (acceptedFiles) => {
+    const token = localStorage.getItem("token");
     if (!token) {
       alert("Please enter a JWT token");
       return;
@@ -139,6 +141,7 @@ const Media = () => {
   };
 
   const deleteMedia = async (mediaId) => {
+    const token = localStorage.getItem("token");
     if (!token) {
       alert("Please enter a JWT token");
       return;
@@ -162,6 +165,7 @@ const Media = () => {
     fetchMediaList();
   }, [pagination.currentPage, filters]);
   const handleUpload = async (uploadedFiles) => {
+    const token = localStorage.getItem("token");
     console.log(uploadedFiles);
     if (!uploadedFiles) {
       alert("please upload file");
