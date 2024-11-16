@@ -1,0 +1,478 @@
+{
+    "messages": {
+        "messages": [
+            {
+                "_id": "67379bf52e6371856f66411f",
+                "messageId": "msg_1731697653132_fc4ec612",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "MEDIA",
+                "content": {
+                    "type": "MEDIA"
+                },
+                "status": "PENDING",
+                "statusUpdates": [
+                    {
+                        "status": "PENDING",
+                        "timestamp": "2024-11-15T19:07:33.132Z"
+                    }
+                ],
+                "metadata": {
+                    "attempts": 0,
+                    "originalRequest": {
+                        "type": "MEDIA",
+                        "content": {
+                            "type": "MEDIA",
+                            "mediaType": "audio",
+                            "mediaId": "1117061753354181",
+                            "url": null,
+                            "caption": "Check out this image!"
+                        }
+                    }
+                },
+                "createdAt": "2024-11-15T19:07:33.134Z",
+                "updatedAt": "2024-11-15T19:07:33.134Z",
+                "__v": 0
+            },
+            {
+                "_id": "67379be32e6371856f6640ec",
+                "messageId": "msg_1731697635567_3e7a3ee0",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "MEDIA",
+                "content": {
+                    "type": "MEDIA"
+                },
+                "status": "DELIVERED",
+                "statusUpdates": [
+                    {
+                        "status": "QUEUED",
+                        "timestamp": "2024-11-15T19:07:16.799Z"
+                    },
+                    {
+                        "status": "SENT",
+                        "timestamp": "2024-11-15T19:07:17.000Z"
+                    },
+                    {
+                        "status": "DELIVERED",
+                        "timestamp": "2024-11-15T19:07:17.000Z"
+                    }
+                ],
+                "metadata": {
+                    "attempts": 0,
+                    "originalRequest": {
+                        "type": "MEDIA",
+                        "content": {
+                            "type": "MEDIA",
+                            "mediaType": "image",
+                            "mediaId": "1176225830764108",
+                            "url": null,
+                            "caption": "Check out this image!"
+                        }
+                    }
+                },
+                "createdAt": "2024-11-15T19:07:15.570Z",
+                "updatedAt": "2024-11-15T19:07:20.002Z",
+                "__v": 0,
+                "whatsappId": "wamid.HBgMOTE4OTEwNzUwMDI2FQIAERgSRDRCMzk5N0UxRDVDREY5MTkwAA=="
+            },
+            {
+                "_id": "67379bc82e6371856f6640b9",
+                "messageId": "msg_1731697608854_389372eb",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "MEDIA",
+                "content": {
+                    "type": "MEDIA"
+                },
+                "status": "SENT",
+                "statusUpdates": [
+                    {
+                        "status": "QUEUED",
+                        "timestamp": "2024-11-15T19:06:49.890Z"
+                    },
+                    {
+                        "status": "DELIVERED",
+                        "timestamp": "2024-11-15T19:06:50.000Z"
+                    },
+                    {
+                        "status": "SENT",
+                        "timestamp": "2024-11-15T19:06:50.000Z"
+                    }
+                ],
+                "metadata": {
+                    "attempts": 0,
+                    "originalRequest": {
+                        "type": "MEDIA",
+                        "content": {
+                            "type": "MEDIA",
+                            "mediaType": "document",
+                            "mediaId": "1563538204266874",
+                            "url": null,
+                            "caption": "Check out this image!"
+                        }
+                    }
+                },
+                "createdAt": "2024-11-15T19:06:48.856Z",
+                "updatedAt": "2024-11-15T19:06:52.370Z",
+                "__v": 0,
+                "whatsappId": "wamid.HBgMOTE4OTEwNzUwMDI2FQIAERgSMDRGMURENkRCRkVEN0Y4NDEwAA=="
+            },
+            {
+                "_id": "67379baa2e6371856f66408b",
+                "messageId": "msg_1731697578183_2418901f",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "MEDIA",
+                "content": {
+                    "type": "MEDIA"
+                },
+                "status": "FAILED",
+                "statusUpdates": [
+                    {
+                        "status": "QUEUED",
+                        "timestamp": "2024-11-15T19:06:19.405Z"
+                    },
+                    {
+                        "status": "FAILED",
+                        "timestamp": "2024-11-15T19:06:19.000Z",
+                        "error": {
+                            "code": 131053,
+                            "title": "Media upload error",
+                            "message": "Media upload error",
+                            "details": "Unsupported Image mime type application/pdf. Please use one of image/png, image/jpeg."
+                        }
+                    }
+                ],
+                "metadata": {
+                    "attempts": 0,
+                    "originalRequest": {
+                        "type": "MEDIA",
+                        "content": {
+                            "type": "MEDIA",
+                            "mediaType": "image",
+                            "mediaId": "1563538204266874",
+                            "url": null,
+                            "caption": "Check out this image!"
+                        }
+                    }
+                },
+                "createdAt": "2024-11-15T19:06:18.186Z",
+                "updatedAt": "2024-11-15T19:06:21.601Z",
+                "__v": 0,
+                "whatsappId": "wamid.HBgMOTE4OTEwNzUwMDI2FQIAERgSMjY1QTE5MDNCNjQwMThGRDUyAA=="
+            },
+            {
+                "_id": "673799072e6371856f663c7e",
+                "messageId": "msg_1731696903320_c3e4f2cd",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "TEXT",
+                "content": {
+                    "type": "TEXT",
+                    "text": "Hello Karan Shah, Your age is 12"
+                },
+                "status": "SENT",
+                "statusUpdates": [
+                    {
+                        "status": "QUEUED",
+                        "timestamp": "2024-11-15T18:55:04.599Z"
+                    },
+                    {
+                        "status": "DELIVERED",
+                        "timestamp": "2024-11-15T18:55:05.000Z"
+                    },
+                    {
+                        "status": "SENT",
+                        "timestamp": "2024-11-15T18:55:04.000Z"
+                    }
+                ],
+                "metadata": {
+                    "attempts": 0,
+                    "originalRequest": {
+                        "type": "TEXT",
+                        "content": {
+                            "type": "TEXT",
+                            "text": "Hello Karan Shah, Your age is 12"
+                        }
+                    }
+                },
+                "createdAt": "2024-11-15T18:55:03.327Z",
+                "updatedAt": "2024-11-15T18:55:06.926Z",
+                "__v": 0,
+                "whatsappId": "wamid.HBgMOTE4OTEwNzUwMDI2FQIAERgSNzQ1MzQxN0IwM0JEQjYyODE0AA=="
+            },
+            {
+                "_id": "673791d6b05ac5ff0e80037f",
+                "messageId": "msg_1731695062180_51ee5961",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "TEXT",
+                "content": {
+                    "type": "TEXT",
+                    "text": "Hello Karan Shah, Your age is 0"
+                },
+                "status": "DELIVERED",
+                "statusUpdates": [
+                    {
+                        "status": "PENDING",
+                        "timestamp": "2024-11-15T18:24:22.181Z"
+                    },
+                    {
+                        "status": "QUEUED",
+                        "timestamp": "2024-11-15T18:24:23.051Z"
+                    },
+                    {
+                        "status": "SENT",
+                        "timestamp": "2024-11-15T18:24:23.000Z"
+                    },
+                    {
+                        "status": "DELIVERED",
+                        "timestamp": "2024-11-15T18:24:23.000Z"
+                    }
+                ],
+                "metadata": {},
+                "createdAt": "2024-11-15T18:24:22.183Z",
+                "updatedAt": "2024-11-15T18:24:25.433Z",
+                "__v": 0,
+                "whatsappId": "wamid.HBgMOTE4OTEwNzUwMDI2FQIAERgSRkY2QTI5QjU5RjIwRDExRTlBAA=="
+            },
+            {
+                "_id": "673791a9b05ac5ff0e800303",
+                "messageId": "msg_1731695017843_b3b022f7",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "TEXT",
+                "content": {
+                    "type": "TEXT",
+                    "text": "Hello Karan Shah, How are you?"
+                },
+                "status": "DELIVERED",
+                "statusUpdates": [
+                    {
+                        "status": "PENDING",
+                        "timestamp": "2024-11-15T18:23:37.844Z"
+                    },
+                    {
+                        "status": "QUEUED",
+                        "timestamp": "2024-11-15T18:23:39.091Z"
+                    },
+                    {
+                        "status": "SENT",
+                        "timestamp": "2024-11-15T18:23:39.000Z"
+                    },
+                    {
+                        "status": "DELIVERED",
+                        "timestamp": "2024-11-15T18:23:39.000Z"
+                    }
+                ],
+                "metadata": {},
+                "createdAt": "2024-11-15T18:23:37.855Z",
+                "updatedAt": "2024-11-15T18:23:41.932Z",
+                "__v": 0,
+                "whatsappId": "wamid.HBgMOTE4OTEwNzUwMDI2FQIAERgSOERDRjM4NjcxQ0JFNkRENUZBAA=="
+            },
+            {
+                "_id": "67378ff95e1981ae715f00b6",
+                "messageId": "msg_1731694585690_617ce04a",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "TEXT",
+                "content": {
+                    "type": "TEXT",
+                    "text": "Hello Karan Shah, How are you?"
+                },
+                "status": "PENDING",
+                "statusUpdates": [
+                    {
+                        "status": "PENDING",
+                        "timestamp": "2024-11-15T18:16:25.691Z"
+                    }
+                ],
+                "metadata": {},
+                "createdAt": "2024-11-15T18:16:25.693Z",
+                "updatedAt": "2024-11-15T18:16:25.693Z",
+                "__v": 0
+            },
+            {
+                "_id": "67378fe95e1981ae715f008f",
+                "messageId": "msg_1731694569358_de378839",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "TEXT",
+                "content": {
+                    "type": "TEXT",
+                    "text": "Hello Karan Shah, How are you?"
+                },
+                "status": "PENDING",
+                "statusUpdates": [
+                    {
+                        "status": "PENDING",
+                        "timestamp": "2024-11-15T18:16:09.358Z"
+                    }
+                ],
+                "metadata": {},
+                "createdAt": "2024-11-15T18:16:09.364Z",
+                "updatedAt": "2024-11-15T18:16:09.364Z",
+                "__v": 0
+            },
+            {
+                "_id": "673709eecf1ffb28ce7bea48",
+                "messageId": "msg_1731660270376_174de983",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "TEXT",
+                "content": {
+                    "text": "Hello! How can I help you today?"
+                },
+                "status": "SENT",
+                "statusUpdates": [
+                    {
+                        "status": "PENDING",
+                        "timestamp": "2024-11-15T08:44:30.376Z"
+                    },
+                    {
+                        "status": "QUEUED",
+                        "timestamp": "2024-11-15T08:44:31.608Z"
+                    },
+                    {
+                        "status": "DELIVERED",
+                        "timestamp": "2024-11-15T08:44:32.000Z"
+                    },
+                    {
+                        "status": "DELIVERED",
+                        "timestamp": "2024-11-15T08:44:32.000Z"
+                    },
+                    {
+                        "status": "SENT",
+                        "timestamp": "2024-11-15T08:44:31.000Z"
+                    }
+                ],
+                "metadata": {},
+                "createdAt": "2024-11-15T08:44:30.378Z",
+                "updatedAt": "2024-11-15T08:44:34.886Z",
+                "whatsappId": "wamid.HBgMOTE4OTEwNzUwMDI2FQIAERgSNEU4MEM4MTI0QzAwQThCNURGAA=="
+            },
+            {
+                "_id": "673709a2cf1ffb28ce7be9b4",
+                "messageId": "msg_1731660194048_h4jmpsuc5",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "whatsappId": "wamid.HBgMOTE4OTEwNzUwMDI2FQIAEhgWM0VCMDZCRDI5N0M4MEY3OUYzRERCNQA=",
+                "direction": "INBOUND",
+                "type": "TEXT",
+                "content": {
+                    "text": "process"
+                },
+                "status": "DELIVERED",
+                "statusUpdates": [
+                    {
+                        "status": "DELIVERED",
+                        "timestamp": "2024-11-15T08:43:11.000Z"
+                    }
+                ],
+                "metadata": {},
+                "createdAt": "2024-11-15T08:43:14.053Z",
+                "updatedAt": "2024-11-15T08:43:14.053Z"
+            },
+            {
+                "_id": "6737086518e178c003512eb1",
+                "messageId": "msg_1731659877868_usdyse3u4",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "whatsappId": "wamid.HBgMOTE4OTEwNzUwMDI2FQIAEhgWM0VCMDNERDkyQzNGNDQ2Q0U3OTBFMgA=",
+                "direction": "INBOUND",
+                "type": "TEXT",
+                "content": {
+                    "text": "Hello Webhook"
+                },
+                "status": "DELIVERED",
+                "statusUpdates": [
+                    {
+                        "status": "DELIVERED",
+                        "timestamp": "2024-11-15T08:37:55.000Z"
+                    }
+                ],
+                "metadata": {},
+                "createdAt": "2024-11-15T08:37:57.874Z",
+                "updatedAt": "2024-11-15T08:37:57.874Z"
+            },
+            {
+                "_id": "6737037b2cddc3f55b134894",
+                "messageId": "msg_1731658619218_b0fc06ac",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "TEXT",
+                "content": {
+                    "text": "Hello! How can I help you today?"
+                },
+                "status": "SENT",
+                "statusUpdates": [
+                    {
+                        "status": "PENDING",
+                        "timestamp": "2024-11-15T08:16:59.218Z"
+                    },
+                    {
+                        "status": "SENT",
+                        "timestamp": "2024-11-15T08:17:00.912Z"
+                    }
+                ],
+                "metadata": {},
+                "createdAt": "2024-11-15T08:16:59.221Z",
+                "updatedAt": "2024-11-15T08:17:00.912Z",
+                "whatsappId": "wamid.HBgMOTE4OTEwNzUwMDI2FQIAERgSNURGNEYwQjc4NTNCNDVBNTNEAA=="
+            },
+            {
+                "_id": "673702e1edc91e5e865f2521",
+                "messageId": "msg_1731658465599_azwit5y3v",
+                "conversationId": "673702e19792c3d68ee0bed7",
+                "userId": "673395bbe97fb4d1c8c0f7e4",
+                "direction": "OUTBOUND",
+                "type": "TEXT",
+                "content": {
+                    "text": "Hello! How can I help you today?"
+                },
+                "status": "FAILED",
+                "statusUpdates": [
+                    {
+                        "status": "PENDING",
+                        "timestamp": "2024-11-15T08:14:25.599Z"
+                    },
+                    {
+                        "status": "FAILED",
+                        "timestamp": "2024-11-15T08:14:25.606Z",
+                        "error": "Invalid message format"
+                    }
+                ],
+                "metadata": {},
+                "createdAt": "2024-11-15T08:14:25.602Z",
+                "updatedAt": "2024-11-15T08:14:25.606Z"
+            }
+        ],
+        "messageWindow": {
+            "isWithinWindow": false,
+            "timeRemaining": 0,
+            "lastMessageAt": "2024-11-15T08:43:14.053Z",
+            "windowExpiry": "2024-11-16T08:43:14.053Z"
+        },
+        "pagination": {
+            "hasMore": false,
+            "nextBefore": "2024-11-15T08:14:25.602Z",
+            "nextMessageId": "msg_1731658465599_azwit5y3v"
+        }
+    },
+    "pagination": {
+        "hasMore": false
+    }
+}

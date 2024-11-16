@@ -20,6 +20,7 @@ import { getUserList } from "../../api/users/getUserList";
 import Loader from "../../components/loader/Loader";
 import SnackbarAlert from "../../components/snackbar/SnackbarAlert ";
 import useTokenExpirationCheck from "../../hooks/useTokenExpirationCheck";
+import { getMessages } from "../../api/Whatsapp/getMessages";
 
 const chats = {
   "John Doe": [
@@ -82,11 +83,48 @@ const Inbox = () => {
     userList();
   }, []);
 
-  const handleUserClick = (user) => {
+ 
+  const handleUserClick = async (user) => {
+    setLoader(true);
+    const { _id } = user || {};
+    const token = localStorage.getItem("token");
+    const { data, error } = await getMessages(token, _id);
+  
+    if (error) {
+      const errorMessage =
+        error?.response?.data?.error?.message ||
+        error?.message ||
+        "Something went wrong";
+      setSnackbarSeverity("error");
+      setSnackbarMessage(errorMessage);
+      setLoader(false);
+    } else {
+      // two data?.data is send from API call to destructure messages and message also includes messages : data format in above json file for future reference
+      const { messages } = data || {};
+      const transformedMessages = messages?.messages.map((message) => {
+        const isTextMessage = message.type === "TEXT";
+        const time = new Date(message.createdAt).toLocaleTimeString();
+  
+        return {
+          message: isTextMessage
+            ? message.content.text
+            : renderMedia(
+                message.metadata.originalRequest.content.mediaUrl,
+                message.metadata.originalRequest.content.mediaType
+              ),
+          sender: message.direction === "OUTBOUND" ? "You" : "Other",
+          status: message.status,
+          time: time,
+        };
+      });
+      setChatMessages(transformedMessages);
+      console.log(transformedMessages, "transformedMessages");
+      setLoader(false);
+    }
+  
     setSelectedUser(user);
-    setChatMessages(chats[user.name] || []);
   };
-
+  
   const handleSendMessage = () => {
     if (messageInput.trim()) {
       setChatMessages((prevMessages) => [
@@ -108,6 +146,34 @@ const Inbox = () => {
     // Placeholder function for handling file upload by type
     console.log(`File type selected: ${fileType}`);
     handleMenuClose();
+  };
+  const renderMedia = (media, mediaType) => {
+    if (mediaType === "image") {
+      return (
+        <img
+          src={media}
+          alt="Image"
+          style={{ maxWidth: "100%", maxHeight: "400px" }}
+        />
+      );
+    }
+    if (mediaType === "video") {
+      return (
+        <video controls style={{ maxWidth: "100%", maxHeight: "400px" }}>
+          <source src={media} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      );
+    }
+    if (mediaType === "audio") {
+      return (
+        <audio controls>
+          <source src={media} type="audio/mp3" />
+          Your browser does not support the audio element.
+        </audio>
+      );
+    }
+    return null; // If there's no media or unknown type, return null
   };
   return (
     <>
@@ -207,35 +273,34 @@ const Inbox = () => {
               backgroundColor: "#f9f9f9",
             }}
           >
-            {selectedUser &&
-              chatMessages.map((chat, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    justifyContent:
-                      chat.sender === "You" ? "flex-end" : "flex-start",
-                    mb: 2,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      backgroundColor:
-                        chat.sender === "You" ? "#dcf8c6" : "#fff",
-                      padding: "8px 12px",
-                      borderRadius: "8px",
-                      maxWidth: "60%",
-                    }}
-                  >
-                    <Typography variant="body1" sx={{ mb: 1 }}>
-                      {chat.message}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: "gray" }}>
-                      {chat.status}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
+         {selectedUser &&
+    chatMessages.map((chat, index) => (
+      <Box
+        key={index}
+        sx={{
+          display: "flex",
+          justifyContent: chat.sender === "You" ? "flex-end" : "flex-start",
+          mb: 2,
+        }}
+      >
+        <Box
+          sx={{
+            backgroundColor: chat.sender === "You" ? "#dcf8c6" : "#fff",
+            padding: "8px 12px",
+            borderRadius: "8px",
+            maxWidth: "60%",
+          }}
+        >
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            {typeof chat.message === "string" ? chat.message : chat.message}
+          </Typography>
+          <Typography variant="caption" sx={{ color: "gray" }}>
+            {chat.time}
+            {chat.sender === "You" && ` • ${chat.status}`}
+          </Typography>
+        </Box>
+      </Box>
+    ))}
           </Box>
 
           {/* Message Input Box */}
