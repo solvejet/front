@@ -12,6 +12,7 @@ import {
   Grid,
 } from '@mui/material';
 import { Delete, Add } from '@mui/icons-material';
+import useTokenExpirationCheck from '../../hooks/useTokenExpirationCheck';
 
 const Templates = () => {
   const [template, setTemplate] = useState({
@@ -25,6 +26,7 @@ const Templates = () => {
       buttons: [],
     },
   });
+  useTokenExpirationCheck();
 
   const categories = ['MARKETING', 'AUTHENTICATION', 'UTILITY'];
 

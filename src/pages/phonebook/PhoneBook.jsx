@@ -24,6 +24,7 @@ import Swal from "sweetalert2";
 import AddModal from "./component/addUser/AddUser";
 import AssignModal from "./component/assignUser/AssignUser";
 import SnackbarAlert from "../../components/snackbar/SnackbarAlert ";
+import useTokenExpirationCheck from "../../hooks/useTokenExpirationCheck";
 
 const generateColumnsFromSchema = (schema, setIsAssignOpen) => {
   return Object.keys(schema).map((key) => ({
@@ -102,7 +103,7 @@ const PhoneBook = () => {
   const handlSchemaAddClose = () => setIsSchemaModel(false);
   const handleAssignOpen = () => setIsAssignOpen(true);
   const handleAssignClose = () => setIsAssignOpen(false);
-
+  useTokenExpirationCheck()
   const userList = async (token) => {
     setLoader(true);
     const { data, error } = await getUserList(token);

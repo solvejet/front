@@ -3,6 +3,7 @@ import { Box, Button, Typography, Stack, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import RouterPaths from "../../route.paths";
+import useTokenExpirationCheck from "../../hooks/useTokenExpirationCheck";
 
 const Home = () => {
   const [loader, setLoader] = useState(false);
@@ -31,6 +32,7 @@ const Home = () => {
   ]);
 
   const navgate = useNavigate();
+  useTokenExpirationCheck();
 
   return (
     <Box sx={{ padding: "16px" }}>

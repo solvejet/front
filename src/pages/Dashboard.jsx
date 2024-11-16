@@ -1,5 +1,5 @@
-// src/pages/Dashboard.jsx
-import React from "react";
+import React, { useCallback, useEffect } from "react";
+
 import {
   LineChart,
   Line,
@@ -22,9 +22,48 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { tablesData, data } from "../constant/dashboard/dashboardData";
 // Sample data (replace with real data)
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
 
+import { useNavigate } from "react-router-dom";
+import RouterPaths from "../route.paths";
+import { logoutUser } from "../redux/slices/authSlice";
+import useTokenExpirationCheck from "../hooks/useTokenExpirationCheck";
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const theme = useTheme();
+  // useEffect(() => {
+  //   const checkTokenExpiration = () => {
+  //     const token = localStorage.getItem("token"); // assuming the token is stored in localStorage
+
+  //     if (!token) {
+  //       // No token available, redirect to login
+  //       navigate(RouterPaths.LOGIN);
+  //       return;
+  //     }
+
+  //     try {
+  //       const decoded = jwtDecode(token);
+  //       const currentTime = Date.now() / 1000; // Current time in seconds
+
+  //       if (decoded.exp < currentTime) {
+  //         // Token expired, clear the token and redirect to login
+  //         localStorage.removeItem("token");
+  //         dispatch(logoutUser());
+  //       }
+  //     } catch (error) {
+  //       console.error("Token decoding error:", error);
+  //       // In case the token is invalid, redirect to login
+  //       navigate(RouterPaths.LOGIN);
+  //     }
+  //   };
+
+  //   checkTokenExpiration();
+  // }, [navigate]);
+  useTokenExpirationCheck();
+
   return (
     <>
       {/* First Chart */}

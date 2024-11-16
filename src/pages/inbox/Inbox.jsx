@@ -19,6 +19,7 @@ import { useState } from "react";
 import { getUserList } from "../../api/users/getUserList";
 import Loader from "../../components/loader/Loader";
 import SnackbarAlert from "../../components/snackbar/SnackbarAlert ";
+import useTokenExpirationCheck from "../../hooks/useTokenExpirationCheck";
 
 const chats = {
   "John Doe": [
@@ -40,6 +41,8 @@ const Inbox = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  useTokenExpirationCheck();
+
   const userList = async () => {
     const token = localStorage.getItem("token");
     setLoader(true);
